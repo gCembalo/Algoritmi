@@ -11,8 +11,8 @@ double frTaylor(const double&);
 double fcTaylor(const double&);
 
 int main(){
-    cout << setprecision(7);
-    cout << setiosflags ( ios::scientific );
+    cout << setprecision(7);  //set the significant digits
+    cout << setiosflags ( ios::scientific );  //set the scientific notation
 
     double xr, xc; // Definisco le x da usare per le funzioni
 

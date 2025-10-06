@@ -35,6 +35,7 @@ int main(){
     return 0;
 }
 
+
 void dati(double& x, double& y, double& z){
     // Prendo i coefficienti
     cout << "Abbiamo l'equazione:" << endl;
