@@ -62,11 +62,11 @@ int main(){
 
 // Funzioni
 double func1(double x){
-    return sqrt(1+x);
+    return sqrt(1.+x);
 }
 
 double func2(double x){
-    return 1 - x + 2*x*x + 0.5*x*x*x + x*x*x*x/4 - x*x*x*x*x/8;
+    return 1. - x + 2.*x*x + 0.5*x*x*x + x*x*x*x/4. - x*x*x*x*x/8.;
 }
 
 double Simpson(double (*F)(double), double a, double b, int N){
@@ -74,11 +74,11 @@ double Simpson(double (*F)(double), double a, double b, int N){
     double h, sum;
     // Definisco l'ampiezza di ogni intervallo
     h = fabs(a-b)/(double)N;
-    sum = (F(a)+F(b))*h/3;
+    sum = (F(a)+F(b))*h/3.;
     for (int i=1; i<N; i++ )
     {
-        sum += w*F(a + i*h)*h/3;
-        w = 6-w; // Calcolo il peso ogni volta
+        sum += w*F(a + i*h)*h/3.;
+        w = 6.-w; // Calcolo il peso ogni volta
     }
     return sum;
 }
