@@ -5,7 +5,7 @@ using namespace std;
 
 int main(){
   cout << setiosflags ( ios::scientific );
-  int N=13; // numero di step
+  int N=10; // numero di step
 
   double xend=10;
   double dx = xend/N;
