@@ -38,7 +38,23 @@ int Quotient(int a, int b, int& q, int& r){
 
 // ------------------ heron.cpp ------------------- //
 
+double heron(const double &S, double &x, double &err, double &y){
+    // inizializzo l'errore per poter mettere un controllo sul ciclo
+    //err = 10;
 
+    // sviluppo la funzione
+    for(int i=0; i<100; i++){
+        if(err > pow(10,-16)){
+            y = 0.5*( x + S/x );
+            err = fabs(x-y);
+            x=y;
+        } else{
+            break;
+        }
+        cout << "Iterazione " << i << ": " << y << "; err = " << err << endl;
+    }
+    return x;
+}
 
 
 // ------------------ quadratic.cpp ------------------- //

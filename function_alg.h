@@ -26,7 +26,7 @@ int Quotient(int, int, int&, int&);
 //-------------------------------------------------- 2-Precision ---------------------------------------------------------//
 
 // heron.cpp
-
+double heron(const double &, double &, double &, double &);
 
 // quadratic.cpp
 void dati(double&, double&, double&);

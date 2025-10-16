@@ -21,17 +21,21 @@ int main(){
     double ris = 412.0/45.0;
     double tol = 1e-5;
 
+    int pt1 = 3, pt2 = 4;
+    int interv = 1;
+
     cout << "\n+-----------------------------------------+\n" << endl;
     cout << "         x^4y^2 + 2x^2y^2 - x^2y + 2       \n" << endl;
     cout << "Risultato esatto = " << ris << endl;
-    cout << "Gauss            = " << Gauss2D(func, x0, x1, y0, y1, 1, 3) << endl;
+    cout << "Gauss            = " << Gauss2D(func, x0, x1, y0, y1, interv, pt1) << endl;
+    cout << "usando " << pt1 << " punti e " << interv << " intervalli." << endl;
 
     cout << "\n+-----------------------------------------+\n" << endl;
     cout << "         valore pi funzione a gradino       \n" << endl;
     cout << "pi  = 3.1415926535897932384626433\n" << endl;
     cout << "Con una tolleranza = " << setprecision(0) << tol << " : " << endl;
     cout << setprecision(12);  //set the significant digits
-    ConvergenceGauss(func2, x0, x1, y0, y1, 4, tol);
+    ConvergenceGauss(func2, x0, x1, y0, y1, pt2, tol);
 
     cout << "\n+-----------------------------------------+\n" << endl;
 
@@ -148,5 +152,5 @@ void ConvergenceGauss(double (*F)(double, double), double x0, double x1, double 
     while ( fabs( Gauss2D(func2, x0, x1, y0, y1, i, ng) - 3.1415926535897932384626433 ) > tol ){
         i ++ ;
     }
-    cout << "Gauss = " << Gauss2D(func2, x0, x1, y0, y1, i, ng) << "\ncon " << i << " intervalli." << endl;
+    cout << "Gauss = " << Gauss2D(func2, x0, x1, y0, y1, i, ng) << "\nusando " << ng << " punti e con " << i << " intervalli." << endl;
 }

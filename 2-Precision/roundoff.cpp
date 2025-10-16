@@ -66,13 +66,15 @@ double fx2c(const double& x){
 
 // Definizione sviluppo di Taylor della sqrt
 double frTaylor(const double& x){
-    double c = x + 1./(2.*x) - 1./(8.*x*x*x) - x;
+    //double c = x + 1./(2.*x) - 1./(8.*x*x*x) - x;
+    double c = 1./(2.*x);
     return c;
 }
 
 // Definizione sviluppo di Taylor del cos
 double fcTaylor(const double& x){
     double d;
-    d = 1. - (1. - (x*x)/2. + (x*x*x*x)/(24.));
+    //d = 1. - (1. - (x*x)/2. + (x*x*x*x)/(24.));
+    d = (x*x)/2.;
     return d;
 }
