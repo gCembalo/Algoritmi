@@ -33,11 +33,10 @@ int main(){
     double funck1 = 1./2.; // k=1
     double funck2 = 1./3.; // k=2
 
-    for( int i=4 ; i<1e8 ; i*=2 ){
+    for( int i=4 ; i<1e5 ; i*=2 ){
 
         double x1 = 0., x2 = 0.; // definisco i momenti
 
-        srand48(time(NULL));
         for( int j=0 ; j<i ; j++){
 
             x = drand48();

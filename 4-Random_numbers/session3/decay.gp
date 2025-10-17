@@ -3,7 +3,7 @@ reset
 # decay plots
 set term qt size 600,400
 set xlabel "t"  font ",14"
-set ylabel "N(t)"  font ",14"
+set ylabel "N(t)/N0"  font ",14"
 set log y
 set key         font ",14"
 set lmargin at screen 0.12
