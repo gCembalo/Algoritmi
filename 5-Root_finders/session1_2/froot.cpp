@@ -17,7 +17,7 @@ int main(){
     cout << setprecision(7);  //set the significant digits
     cout << setiosflags ( ios::scientific );  //set the scientific notation
 
-    double tol = 1e-7; // tolleranza
+    double tol = 1.e-7; // tolleranza
     double a = -1. , b = 1.; // gli estremi dell'intervallo in cui sappiamo esserci lo zero
 
     cout << "\n+-----------------------------------------------------------------------------+\n              e^(-x) - x\n\nLo zero è a x = " << 0.56714329 << endl;

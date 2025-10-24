@@ -1,3 +1,7 @@
+//
+// Vedi le slide ch05 per vedere come organizzare il tuo codice.
+//
+
 #ifndef function_alg
 // La parte da qua in poi sara` considerato
 // solo se funcion_alg non e` stato ancora definito.

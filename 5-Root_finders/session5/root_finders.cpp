@@ -1,91 +1,8 @@
-#include <iostream>
-#include <iomanip>
-#include <cmath>
-#include <fstream>
+#include "root_finders.h"
 
 using namespace std;
 
-double pol(double);
-double derpol(double);
-int bisection(double (*F)(double), double, double, double, double&);
-int false_position(double (*F)(double), double, double, double, double&);
-int secant_method(double (*F)(double), double, double, double, double &);
-int newton_method(double (*F)(double), double (*derF)(double), double, double, double &);
-
-int main(){
-
-    // definisco gli estremi dell'intervallo
-    double a = -5, b = 0;
-    // defiisco una tolleranza
-    double tol = 1.e-8;
-    //double facc = 1e-6;
-    // definisco gli zeri
-    double x0, x1, x2, x3;
-
-    cout << "\n+-----------------------------------------------------------------------------+\nLo zero è a x = " << -1 << endl;
-
-    cout << "prendendo l'intervallo [ " << a << " , " << b << " ]\n" << endl;
-
-    cout << setprecision(7);  //set the significant digits
-    cout << setiosflags ( ios::scientific );  //set the scientific notation
-
-    cout << "\nCon # iterazioni:\n" << endl;
-     // stampo gli algoritmi
-    bisection(pol, a, b, tol, x0);
-    false_position(pol, a, b, tol, x1);
-    secant_method(pol, a, b, tol, x2);
-    newton_method(pol, derpol, a, tol, x3);
-
-    cout << "\nI diversi metodi restituiscono:\n" << endl;
-
-    cout << "(Bisezione): " << x0 << "\n(False position): " << x1 << "\n(Secant): " << x2 << "\n(Newton): " << x3 << endl;
-
-    cout << "\n+-----------------------------------------------------------------------------+\n" << endl;
-
-    return 0;
-}
-
-
-
-
-double pol(double x){
-    
-    // definisco l'array e il polinomio
-    double a[4] = {5, 1, -3, 1};
-    // inizializzo p come a_n
-    double p = a[3];
-
-    // valuto il polinomio con il metodo di horner
-    for( int j = 3-1 ; j >= 0 ; j-- ){
-
-        // moltiplico per x il termine in p
-        p = a[j] + p*x;
-    }
-
-    return p;
-}
-
-double derpol(double x){
-
-    // definisco l'array e il polinomio
-    double a[3] = {1, -6, 3};
-    //double a[4] = {5, 1, -3, 1};
-    // inizializzo p come a_n
-    double p = a[2];
-    double dp = 0;
-
-    // valuto il polinomio con il metodo di horner
-    for( int j = 2-1 ; j >= 0 ; j-- ){
-
-        // moltiplico per x il termine in p
-        //dp = dp*x + p; // devi mettere p[2] e int j = 2-1 e usare a[4]
-        p = a[j] + p*x;
-    }
-
-    return p;
-}
-
-int bisection(double (*F)(double), double a, double b, double tol, double &zero){
+int bisection(double (*F)(double), double a, double b, double tol, double &zero, int &l){
 
     double x; // la mia guess dello zero che aggiorno ad ogni iterazione
     int n = 0; // la variabile che mi permette di contare le iterazioni
@@ -95,24 +12,34 @@ int bisection(double (*F)(double), double a, double b, double tol, double &zero)
         zero = a;
         // creo l'output delle iterazioni
         cout << "(Bisection) # = " << n << "    (l'estremo " << a << " è già lo zero)"<< endl;
+        l = n;
         return 0;
     }
     else if( F(b) == 0.0 ){
         zero = b;
         // creo l'output delle iterazioni
         cout << "(Bisection) # = " << n << "(l'estremo " << b << " è già lo zero)"<< endl;
+        l = n;
         return 0;
     }
     else{
-        while( fabs(a-b) > tol and n<100 ){
+        while( fabs(a-b) > tol ){
         
             n++;
+
+            if( n == 100 ){
+                cout << "(Bisection) Troppe iterazioni." << endl;
+                l = n;
+                return 0;
+            }
+
             x = ( a+b ) / 2;
 
             if( F(x) == 0 ){
                 zero = x;
                 // creo l'output delle iterazioni
-                cout << "(Bisection) # = " << n << endl;
+                //cout << "(Bisection) # = " << n << endl;
+                l = n;
                 return 0;
             }
             // controllo dove si trova x rispetto gli estremi a e b
@@ -129,8 +56,9 @@ int bisection(double (*F)(double), double a, double b, double tol, double &zero)
         }
 
         // creo l'output delle iterazioni
-        cout << "(Bisection) # = " << n << endl;
+        //cout << "(Bisection) # = " << n << endl;
 
+        l = n; // sono le iterazioni
         zero = x;
         return 0;
 
@@ -138,7 +66,7 @@ int bisection(double (*F)(double), double a, double b, double tol, double &zero)
 
 }
 
-int false_position(double (*F)(double), double a, double b, double tol, double &zero){
+int false_position(double (*F)(double), double a, double b, double tol, double &zero, int &l){
     double x = 3; // la guess di zero della funzione
     double xk = 0; // variabile che mi serve per la tolleranza
     double m, q; // parametri della retta
@@ -150,6 +78,7 @@ int false_position(double (*F)(double), double a, double b, double tol, double &
         zero = a;
         // creo l'output delle iterazioni
         cout << "(False position) # = " << n << "    (l'estremo " << a << " è già lo zero)"<< endl;
+        l = n;
         return 0;
 
     }
@@ -158,14 +87,22 @@ int false_position(double (*F)(double), double a, double b, double tol, double &
         zero = b;
         // creo l'output delle iterazioni
         cout << "(False position) # = " << n << "(l'estremo " << b << " è già lo zero)"<< endl;
+        l = n;
         return 0;
 
     }
     else{
         // metto nel ciclo la condizione sia sulla tolleranza che sul numero di cicli
-        while( fabs( x - xk ) > tol and n < 100 ){
+        while( fabs( x - xk ) > tol ){
         
             n++;
+
+            if( n == 100 ){
+                cout << "(False position) Troppe iterazioni." << endl;
+                l = n;
+                return 0;
+            }
+
             xk = x;
         
             // trovo la retta (con conti sul quaderno)
@@ -188,15 +125,16 @@ int false_position(double (*F)(double), double a, double b, double tol, double &
         }
 
         // creo l'output delle iterazioni
-        cout << "(False position) # = " << n << endl;
+        //cout << "(False position) # = " << n << endl;
 
+        l = n; // sono le iterazioni
         zero = x;
         return 0;
 
     }
 }
 
-int secant_method(double (*F)(double), double a, double b, double tol, double &zero){
+int secant_method(double (*F)(double), double a, double b, double tol, double &zero, int &l){
 
     // definisco le variabili che mi servono per tenere traccia delle varie iterazioni di x
     double xk1 = a, xk = b, xk2 = xk + 1; // dove uso xk come x_k, xk1 come x_{k-1} e xk2 come x_{k+1} ; inizializzo gli zeri sugli estremi dell'intervallo in cui ricaviamo la retta
@@ -209,6 +147,7 @@ int secant_method(double (*F)(double), double a, double b, double tol, double &z
         zero = a;
         // creo l'output delle iterazioni
         cout << "(Secant) # = " << n << "    (l'estremo " << a << " è già lo zero)" << endl;
+        l = n; // sono le iterazioni
         return 0;
 
     }
@@ -217,15 +156,23 @@ int secant_method(double (*F)(double), double a, double b, double tol, double &z
         zero = b;
         // creo l'output delle iterazioni
         cout << "(Secant) # = " << n << "(l'estremo " << b << " è già lo zero)"<< endl;
+        l = n; // sono le iterazioni
         return 0;
 
     }
     else{
         
         // metto nel ciclo la condizione sia sulla tolleranza che sul numero di cicli
-        while( fabs( xk2 - xp ) > tol and n < 100 ){
+        while( fabs( xk2 - xp ) > tol ){
 
             n++;
+
+            if( n == 100 ){
+                cout << "(Secant) Troppe iterazioni." << endl;
+                l = n; // sono le iterazioni
+                return 0;
+            }
+
             xp = xk2;
 
             // calcolo lo zero x_{k+1}
@@ -240,8 +187,9 @@ int secant_method(double (*F)(double), double a, double b, double tol, double &z
         }
 
         // creo l'output delle iterazioni
-        cout << "(Secant) # = " << n << endl;
+        //cout << "(Secant) # = " << n << endl;
 
+        l = n; // sono le iterazioni
         zero = xk2;
         return 0;
 
@@ -249,7 +197,7 @@ int secant_method(double (*F)(double), double a, double b, double tol, double &z
 
 }
 
-int newton_method(double (*F)(double), double (*derF)(double), double a, double tol, double &zero){
+int newton_method(double (*F)(double), double (*derF)(double), double a, double tol, double &zero, int &l){
 
     // definisco le variabili che mi servono per tenere traccia delle varie iterazioni di x
     double xk = a, xk1 = xk + 1; // dove uso xk come x_k, xk1 come x_{k+1}
@@ -263,22 +211,32 @@ int newton_method(double (*F)(double), double (*derF)(double), double a, double 
         zero = a;
         // creo l'output delle iterazioni
         cout << "(Newton) # = " << n << "    (l'estremo " << a << " è già lo zero)"<< endl;
+        l = n; // sono le iterazioni
         return 0;
 
     }
     else{
         
         // metto nel ciclo la condizione sia sulla tolleranza che sul numero di cicli
-        while( fabs(F(xk)) > tol and n < 100 ){
+        while( fabs(F(xk)) > tol ){
 
             // controllo di non avere una derivata nulla
-            if (fabs(derF(xk)) < 1e-12) {
+            if (fabs(derF(xk)) < 1.e-20) {
 
-            cout << "Errore: derivata troppo piccola.\n" << endl;
+            cout << "(Newton) Errore: derivata troppo piccola.\n" << endl;
+            l = n; // sono le iterazioni
             return 0;
+            
             }
 
             n++;
+
+            if( n == 100 ){
+                cout << "(Newton) Troppe iterazioni." << endl;
+                l = n; // sono le iterazioni
+                return 0;
+            }
+
             xp = xk;
 
             // calcolo lo zero x_{k+1}
@@ -292,10 +250,48 @@ int newton_method(double (*F)(double), double (*derF)(double), double a, double 
         }
 
         // creo l'output delle iterazioni
-        cout << "(Newton) # = " << n << endl;
+        //cout << "(Newton) # = " << n << endl;
 
+        l = n; // sono le iterazioni
         zero = xk;
         return 0;
     }
-    
+
+}
+
+
+int Bracket(double (*F)(double), double a, double b, double n, double *xL, double *xR, int &nroots){
+
+    // definisco le variabili che uso per contare
+    int count = 0, i; // count mi dice quanti zeri ho
+    double dx = ( b - a )/(double)n; // spacing
+    double aL, aR; // estremi di ogni sotto intervallo
+
+    double fL, fR; // valori delle funzioni valutate agli estremi
+    fL = F(a);
+
+    // faccio il loop su tutti gli intervalli
+    for( i = 0 ; i < n ; i++ ){
+
+        aL = a + i*dx;
+        aR = a + (i+1)*dx;
+
+        // metto la condizione in cui abbiamo un cambiamento di segno e quindi con la quale ci ricordiamo il valore
+        fR = F(aR);
+        if( fL*fR <= 0.0 ){
+
+            // metto gli estremi nell'array
+            xL[count] = aL;
+            xR[count] = aR;
+            count++; // aggiorno il numero di roots
+
+        }
+        
+        fL = fR;
+
+    }
+
+    nroots = count;
+    return 0;
+
 }

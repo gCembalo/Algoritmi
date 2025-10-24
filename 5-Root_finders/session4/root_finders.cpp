@@ -1,89 +1,6 @@
-#include <iostream>
-#include <iomanip>
-#include <cmath>
-#include <fstream>
+#include "root_finders.h"
 
 using namespace std;
-
-double pol(double);
-double derpol(double);
-int bisection(double (*F)(double), double, double, double, double&);
-int false_position(double (*F)(double), double, double, double, double&);
-int secant_method(double (*F)(double), double, double, double, double &);
-int newton_method(double (*F)(double), double (*derF)(double), double, double, double &);
-
-int main(){
-
-    // definisco gli estremi dell'intervallo
-    double a = -5, b = 0;
-    // defiisco una tolleranza
-    double tol = 1.e-8;
-    //double facc = 1e-6;
-    // definisco gli zeri
-    double x0, x1, x2, x3;
-
-    cout << "\n+-----------------------------------------------------------------------------+\nLo zero è a x = " << -1 << endl;
-
-    cout << "prendendo l'intervallo [ " << a << " , " << b << " ]\n" << endl;
-
-    cout << setprecision(7);  //set the significant digits
-    cout << setiosflags ( ios::scientific );  //set the scientific notation
-
-    cout << "\nCon # iterazioni:\n" << endl;
-     // stampo gli algoritmi
-    bisection(pol, a, b, tol, x0);
-    false_position(pol, a, b, tol, x1);
-    secant_method(pol, a, b, tol, x2);
-    newton_method(pol, derpol, a, tol, x3);
-
-    cout << "\nI diversi metodi restituiscono:\n" << endl;
-
-    cout << "(Bisezione): " << x0 << "\n(False position): " << x1 << "\n(Secant): " << x2 << "\n(Newton): " << x3 << endl;
-
-    cout << "\n+-----------------------------------------------------------------------------+\n" << endl;
-
-    return 0;
-}
-
-
-
-
-double pol(double x){
-    
-    // definisco l'array e il polinomio
-    double a[4] = {5, 1, -3, 1};
-    // inizializzo p come a_n
-    double p = a[3];
-
-    // valuto il polinomio con il metodo di horner
-    for( int j = 3-1 ; j >= 0 ; j-- ){
-
-        // moltiplico per x il termine in p
-        p = a[j] + p*x;
-    }
-
-    return p;
-}
-
-double derpol(double x){
-
-    // definisco l'array e il polinomio
-    double a[3] = {1, -6, 3};
-    //double a[4] = {5, 1, -3, 1};
-    // inizializzo p come a_n
-    double p = a[2];
-    double dp = 0;
-
-    // valuto il polinomio con il metodo di horner
-    for( int j = 2-1 ; j >= 0 ; j-- ){
-
-        // moltiplico per x il termine in p
-        //dp = dp*x + p; // devi mettere p[2] e int j = 2-1 e usare a[4]
-        p = a[j] + p*x;
-    }
-
-    return p;
-}
 
 int bisection(double (*F)(double), double a, double b, double tol, double &zero){
 
@@ -104,9 +21,15 @@ int bisection(double (*F)(double), double a, double b, double tol, double &zero)
         return 0;
     }
     else{
-        while( fabs(a-b) > tol and n<100 ){
+        while( fabs(a-b) > tol ){
         
             n++;
+
+            if( n == 100 ){
+                cout << "(Bisection) Troppe iterazioni." << endl;
+                return 0;
+            }
+
             x = ( a+b ) / 2;
 
             if( F(x) == 0 ){
@@ -163,9 +86,15 @@ int false_position(double (*F)(double), double a, double b, double tol, double &
     }
     else{
         // metto nel ciclo la condizione sia sulla tolleranza che sul numero di cicli
-        while( fabs( x - xk ) > tol and n < 100 ){
+        while( fabs( x - xk ) > tol ){
         
             n++;
+
+            if( n == 100 ){
+                cout << "(False position) Troppe iterazioni." << endl;
+                return 0;
+            }
+
             xk = x;
         
             // trovo la retta (con conti sul quaderno)
@@ -223,9 +152,15 @@ int secant_method(double (*F)(double), double a, double b, double tol, double &z
     else{
         
         // metto nel ciclo la condizione sia sulla tolleranza che sul numero di cicli
-        while( fabs( xk2 - xp ) > tol and n < 100 ){
+        while( fabs( xk2 - xp ) > tol ){
 
             n++;
+
+            if( n == 100 ){
+                cout << "(Secant) Troppe iterazioni." << endl;
+                return 0;
+            }
+
             xp = xk2;
 
             // calcolo lo zero x_{k+1}
@@ -269,16 +204,22 @@ int newton_method(double (*F)(double), double (*derF)(double), double a, double 
     else{
         
         // metto nel ciclo la condizione sia sulla tolleranza che sul numero di cicli
-        while( fabs(F(xk)) > tol and n < 100 ){
+        while( fabs(F(xk)) > tol ){
 
             // controllo di non avere una derivata nulla
-            if (fabs(derF(xk)) < 1e-12) {
+            if (fabs(derF(xk)) < 1.e-12) {
 
-            cout << "Errore: derivata troppo piccola.\n" << endl;
+            cout << "(Newton) Errore: derivata troppo piccola.\n" << endl;
             return 0;
             }
 
             n++;
+
+            if( n == 100 ){
+                cout << "(Newton) Troppe iterazioni." << endl;
+                return 0;
+            }
+
             xp = xk;
 
             // calcolo lo zero x_{k+1}
@@ -297,5 +238,5 @@ int newton_method(double (*F)(double), double (*derF)(double), double a, double 
         zero = xk;
         return 0;
     }
-    
+
 }
