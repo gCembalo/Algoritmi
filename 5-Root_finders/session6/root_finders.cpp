@@ -197,68 +197,97 @@ int secant_method(double (*F)(double), double a, double b, double tol, double &z
 
 }
 
-int newton_method(double (*F)(double), double (*derF)(double), double a, double tol, double &zero, int &l){
+int newton_method(double (*F)(double), double (*derF)(double), double a, double b, double xtol, double ytol, double &zero, int &l){
 
-    // definisco le variabili che mi servono per tenere traccia delle varie iterazioni di x
-    double xk = a, xk1 = xk + 1; // dove uso xk come x_k, xk1 come x_{k+1}
     int n = 0; // variabile per contare
 
-    double xp = 0; // una variabile di controllo per vedere di quanto miglioriamo la guess
-
-    // metto i controlli di non avere già uno zero
-    if( F(a) == 0.0 ){
+    // controllo che gli estremi non siano già degli zeri
+    double fa = F(a), fb = F(b);
+    if( fabs(fa) < ytol ){
 
         zero = a;
         // creo l'output delle iterazioni
         cout << "(Newton) # = " << n << "    (l'estremo " << a << " è già lo zero)"<< endl;
-        l = n; // sono le iterazioni
+
         return 0;
 
     }
-    else{
-        
-        // metto nel ciclo la condizione sia sulla tolleranza che sul numero di cicli
-        while( fabs(F(xk)) > tol ){
 
-            // controllo di non avere una derivata nulla
-            if (fabs(derF(xk)) < 1.e-12) {
+    if( fabs(fb) < ytol ){
+        
+        zero = b;
+        // creo l'output delle iterazioni
+        cout << "(Newton) # = " << n << "    (l'estremo " << b << " è già lo zero)"<< endl;
+
+        return 0;
+
+    }
+
+    // definisco delle variabili utili all'algoritmo
+    double Deltax = fabs( b-a ); // l'ampiezza dell'intervallo inziale
+    double deltax = Deltax * 0.5; // la nuova ampiezza (inizializzata)
+    double x = ( a + b )*0.5; // la mia prima guess, che prendo a metà dell'intervallo
+    double fx = F(x); // funzione valutata nella guess
+
+    // faccio il ciclo per il metodo di Newton, con i controlli su x, su y e sul numero di iterazioni (nel mezzo del while)
+    while( fabs(deltax) > xtol && fabs(fx) > ytol ){
+
+        n++;
+
+        // blocco il ciclo se raggiungo troppe iterazioni
+        if( n == 100 ){
+
+            cout << "(Newton) Troppe iterazioni. (" << l << ")" << endl;
+            l = n; // sono le iterazioni
+            return 0;
+
+        }
+
+        // metto un controllo sugli intervalli, che mi blocca il ciclo se la nuova ampiezza deltax è maggiore di quella precedente, quindi mi blocca se cominciamo a non convergere
+        if( fabs(deltax) > fabs(Deltax) ){
+
+            zero = x;
+            l = n;
+            return 0;
+
+        }
+
+        // controllo anche di non uscire dal mio intervallo di estremi a e b
+        if( x < a || x > b ){
+
+            cout << "(Newton) il metodo non converge." << endl;
+            return 0;
+
+        }
+
+        // calcolo la derivata e controllo che non sia nulla (troppo piccola)
+        double df = derF(x);
+        if( fabs( df ) < 1.e-15 ){
 
             cout << "(Newton) Errore: derivata troppo piccola.\n" << endl;
             l = n; // sono le iterazioni
             return 0;
             
-            }
-
-            n++;
-
-            if( n == 100 ){
-                cout << "(Newton) Troppe iterazioni." << endl;
-                l = n; // sono le iterazioni
-                return 0;
-            }
-
-            xp = xk;
-
-            // calcolo lo zero x_{k+1}
-            xk1 = xk - F(xk)/derF(xk);
-
-            // creo l'output voluto
-            //cout << "n = " << n << ";    xc = " << xk1 << ";   Deltax = " << fabs(xk1-xk) << ";   f(x0) = " << F(xk1) << endl;
-
-            xk = xk1;
-
         }
 
-        // creo l'output delle iterazioni
-        //cout << "(Newton) # = " << n << endl;
+        // superati tutti i controlli implemento il metodo
+        Deltax = deltax;
+        deltax = fx / df;
+        // calcolo la nuova guess
+        x = x - deltax;
+        // ricalcolo la funzione nella guess
+        fx = F(x);
 
-        l = n; // sono le iterazioni
-        zero = xk;
-        return 0;
     }
 
-}
+    // creo l'output delle iterazioni
+    //cout << "(Newton) # = " << n << endl;
 
+    l = n; // sono le iterazioni
+    zero = x;
+    return 0;
+
+}
 
 int Bracket(double (*F)(double), double a, double b, double n, double *xL, double *xR, int &nroots){
 
