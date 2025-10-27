@@ -1,3 +1,8 @@
+// write a program that extract an integer random number in the range [1,100] and try to guess it. Based on the most recent guess, have the code suggest the interval containing the random number. Count the number of guesses. 
+//
+// For instance, suppose the number to guess is 35, then your code should produce an output similar to [input from keyboard is colored in red] (in the slide).
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>

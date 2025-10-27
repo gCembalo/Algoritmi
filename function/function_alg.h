@@ -14,9 +14,7 @@
 #include <cmath>
 using namespace std;
 
-// Dichiarazione delle funzioni in base alla lezione. Potrebbero esserci funzioni definite più volte,
-// per questo motivo questo headre non è fatto per essere utilizzato, ma solo per avere una raccolta 
-// di tutte le funzioni scritte nelle varie esercitazioni.
+// Dichiarazione delle funzioni in base alla lezione. Potrebbero esserci funzioni definite più volte, quindi è sempre meglio controllare, non solo il funzionamento, ma anche la sintassi con cui le si chiama
 
 
 //-------------------------------------------------- 1-Introduzione ---------------------------------------------------------//
@@ -29,21 +27,16 @@ int Quotient(int, int, int&, int&);
 
 //-------------------------------------------------- 2-Precision ---------------------------------------------------------//
 
-// heron.cpp
-double heron(const double &, double &, double &, double &);
-
 // quadratic.cpp
-void dati(double&, double&, double&);
-void norm(const double&, const double&, const double&, double&, double&);
-void alt(const double&, const double&, const double&, double&, double&);
-void signb(const double&, const double&, const double&, double&, double&);
+void datiQuad(double&, double&, double&);
+void normQuad(const double&, const double&, const double&, double&, double&);
+void altQuad(const double&, const double&, const double&, double&, double&);
+void signbQuad(const double&, const double&, const double&, double&, double&);
 
 // quadratic2.cpp
-void sol(double&, double&);
-void ordsol(double&, double&);
-void norm(const double&, const double&, const double&, double&, double&);
-void alt(const double&, const double&, const double&, double&, double&);
-void signb(const double&, const double&, const double&, double&, double&);
+void solQuad(double&, double&);
+void ordsolQuad(double&, double&);
+// alcune funzioni erano identiche a "quadratic.cpp"
 
 // roundoff.cpp
 double fx1r(const double&);
@@ -53,11 +46,14 @@ double fx2c(const double&);
 double frTaylor(const double&);
 double fcTaylor(const double&);
 
+// heron.cpp
+double heron(const double &, double &, double &, double &);
+
 
 //-------------------------------------------------- 3-Quadrature ---------------------------------------------------------//
 
 // quadrature1.cpp
-double func(double);
+double fExp(double);
 // Diversi metodi di quadratura
 double RectangularRule(double (*)(double), double, double, int);
 double MidPointRule(double (*)(double), double, double, int);
@@ -70,30 +66,31 @@ double ConvergenceTrapezoidal(double (*)(double), double, double, double);
 double ConvergenceSimpson(double (*)(double), double, double, double);
 
 // quadrature2.cpp
-double func1(double);
+double fSqrt(double);
 double func2(double);
 // Diversi metodi
-double Simpson(double (*)(double), double, double, int);
+// il metodo di Simpson è identico a quello in "quadrature.cpp"
 double Gauss(double (*)(double), double, double, int, int);
 
 // integral_sin.cpp
-double func(double); // funzione
-// Diversi metodi
-double Trapezoidal(double (*)(double), double, double,int);
-double Simpson(double (*)(double), double, double, int);
-double Gauss(double (*)(double), double, double, int, int);
+double funcSinx(double); // funzione
+// Diversi metodi implementati in altre esercitazioni
 
 // multid_quadrature.cpp
-double func(double, double);
-double func2(double, double);
+double func1(double, double);
+double funcCirc(double, double);
 double Gauss2D(double (*)(double, double), double, double, double, double, int, int);
 void ConvergenceGauss(double (*F)(double, double), double , double , double , double , int , double);
 
 
-//-------------------------------------------------- 4- ---------------------------------------------------------//
+//-------------------------------------------------- 4-Random_numbers ---------------------------------------------------------//
+
+// distribuzione gaussiana
+double gaussiana(const double&, const double&);
 
 
 
+//-------------------------------------------------- 5-Root_finders ---------------------------------------------------------//
 
 
 

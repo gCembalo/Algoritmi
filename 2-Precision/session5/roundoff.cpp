@@ -1,3 +1,6 @@
+// using single precision arithmetic, obtain a numerical approximation to sqrt(x^2 + 1) – x (valid for large x) and 1 - cos(x) (valid for x ≈ 0). Write your code such that the output looks like the slide. with the first column with the function, in the second one the rationalized one and in the third the Taylor expansion.
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>

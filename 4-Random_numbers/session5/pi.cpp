@@ -1,3 +1,13 @@
+// use random sampling to perform a 2-D integration on the unit disc, determine π:
+//      Consider a circle of radius 1 enclosed in a square of side 2.
+//      Generate pairs of random number, {xi, yi} in the range [-1,1], with i = 1,…,N and count how many points fall inside the circle.
+//      Since we now the area of the square, obtain an approximation of the area of the circle as (something in the slide).
+//
+//      1. Give an input value of N and compute the integral;
+//      2. Keep increasing N such that the relative error err = |I/π-1| < tol (use tol = 10-4);
+//      3. Plot the error* as a function of N = 4,8,16, … ≈ 106-107 and compare it with estimate (≈1/sqrt(N)).
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>

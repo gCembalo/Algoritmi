@@ -1,3 +1,10 @@
+// Using the acceptance-rejection method, generate random deviates following a Gaussian-like distribution. with μ=0, σ=0.5.
+//
+// Choose C to be a constant, e.g. C ≥ W(x) = f(x) and choose x in the range [-5,5];
+//
+// Generate pairs of random numbers (xk,yk) for k = 0…N-1 (take N = 105) and construct the distribution.
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>

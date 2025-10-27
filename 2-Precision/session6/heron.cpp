@@ -1,3 +1,9 @@
+// Compute the square root using Heron’s (or Babylonian) method: finding sqrt(s) is the same as solving the equation:
+// f(x) = x^2 - S = 0   -->  x^{n+1} = 0.5*( x^n + S/x^n )
+//
+// Your code should take, as inputs, the value of S and a guess x(0) to its square root. The code output should look like the one in the slide.
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>

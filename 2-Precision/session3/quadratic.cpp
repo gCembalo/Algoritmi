@@ -1,3 +1,14 @@
+// using double precision arithmetic, write a computer program to solver the quadratic quadratic equation. Using, at first, the standard formula. In order to avoid catastrophic cancellation, implement the selective expressions depending on the sign of the b coefficient.
+//
+// Test your solver on the following cases:
+// a = 1    b = -(x1+x2)    c = x1*x2
+//
+// with:
+// x1 = 2   x2 = -3
+// x1 = 1.e-5    x2 = 1.e8
+// x1 = 1.e-12      x2 = 1.e12
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>
@@ -9,6 +20,7 @@ void alt(const double&,const double&,const double&,double&,double&);
 void signb(const double&,const double&,const double&,double&,double&);
 
 int main(){
+    
     // Prendo i dati
     double a, b, c;
     dati(a, b, c);

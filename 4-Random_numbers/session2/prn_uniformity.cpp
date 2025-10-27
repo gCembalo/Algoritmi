@@ -1,3 +1,12 @@
+// test a random-number generator in the range [0,1] (use double precision !) to obtain a numerical measure of its uniformity and randomness before you stake your scientific reputation on it. 
+//
+// Generate a quick visual test by plotting ri as a function of i (0 ≤ i < 103) : a uniform distribution of uncorrelated point values should appear.
+//
+// Evaluate the kth -moment of the distribution. If the number are distributed uniformly, then the previous equation can be approximated by (something in the slide).
+//
+// Check that the deviation varies as 1/sqrt(N) by plotting the error as a function of N (double N at each iteration to produce a log-log plot). Limit to k = 1 and k = 2.
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>

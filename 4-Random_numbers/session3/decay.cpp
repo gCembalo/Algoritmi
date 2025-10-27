@@ -1,3 +1,11 @@
+// using random deviates in [0,1] simulate the radioactive decay of an initial distribution of N atoms having a decay rate λ (use λ = 0.01).
+// We increase time in discrete steps ∆t (= 1), and for each time interval we count the number of nuclei that have decayed during that ∆t.
+//
+//The simulation quits when there are no nuclei left to decay or when time exceeds a given threshold (e.g. t < 500). Such being the case, we have an outer loop over the time steps ∆t and an inner loop over the remaining nuclei for each time step.
+//
+// Produce a plot.
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>

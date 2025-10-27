@@ -1,3 +1,7 @@
+// Determining machine precision
+//
+// write a computer program to determine the machine precision. Define 1 in float (or double) precision arithmetic and keep adding epsilon (epsilon/10) until 1+eps = 1.
+
 #include <iostream>
 using namespace std;
 
@@ -26,8 +30,10 @@ int main(){
     float psi = 0.1;
 
     while(j+psi > j){
+
         psi = psi/10;
         m++;
+        
     }
 
     //cout << setprecision(10);

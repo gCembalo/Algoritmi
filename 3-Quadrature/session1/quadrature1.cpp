@@ -1,3 +1,10 @@
+// given an interval [a,b] to compute the integral of f(x). Divide the interval [a,b] into N equally spaced sub-interval separated by N+1 points {x0, x1, x2, … xN}. In each sub-interval apply the rectangular, trapezoidal and Simpson rules.
+//
+// Consider f(x) = exp(-x) and use [a, b] = [0,1].
+//
+// Next, iterate by doubling the value of intervals N ( = 4, 8, 16, …) until convergence is achieved. tol is a prescribed tolerance (e.g. 10-5).
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>

@@ -1,3 +1,12 @@
+// Using Simpson rule with 2 intervals (3 points in total) and Gauss-Legendre (1 interval, 3 Gaussian points), compute the integral:
+// int_{0}^{3} \sqrt{ 1+t } dt = 4.66666667
+//
+// Now, using the same code, test the two algorithms in computing the integral:
+// int_{-1}^{5} f(x) dt
+// with f(x) = 1 - x + 2x^2 + x^3 / 2 + x^4 / 4 - x^5 / 8
+// again using 2 intervals for Simpson’s rule and 1 interval for Gauss-Legendre with 3 Gaussian points. The exact result is –66/5. Which of the two is better ?
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>

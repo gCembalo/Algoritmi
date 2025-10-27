@@ -1,3 +1,6 @@
+// Esercizio analogo a "quadratic.cpp" ma con maggior dettaglio
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>

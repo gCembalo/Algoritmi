@@ -1,3 +1,10 @@
+// write a program to compute
+// int_0^x sinx/x dx
+// at x = 0.8 using intervals h = 0.8, 0.4, 0.2, 0.1. The correct value, to ten decimals, is Si(0.8) = 0.77209 57855.
+//
+// Next, using gnuplot, produce a plot like the one in the figure for 0 < x < 25. Try to not sacrifice accuracy as x increases !
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>

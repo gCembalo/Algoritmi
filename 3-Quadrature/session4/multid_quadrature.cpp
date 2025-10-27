@@ -1,3 +1,17 @@
+// use Gaussian integration to compute the integral of a 2D function on the square [-1,1]^2. This form allows you to re-use your previously 1D quadrature rules.
+//
+// This suggests to choose between:
+// 1. A genuine multiD integrator (suggested)
+// 2. Re-use our 1D integrators and define yj externally using, e.g., a global variable approach. In this approach we will need:
+//      A function Func2D = f(x,y): the actual 2D function;
+//      A Function FFunc1D = f(x,y_j): used to perform 1D integration in x;
+//      A Function GGunc1D = G(y) = \int f(x,y) dx: used to perform 1D integration in y;
+//
+// Test your program on the function: x^4 y^2 + 2y^2 x^2 - y x^2 + 2
+// for which the integral on -1 ≤ x,y ≤ 1 evaluates to 412/45 (≈ 9.15556). Since the degree is 4, a Gaussian quadrature rule with Ngauss≥ 3 should compute the integral exactly.
+// Next consider the unit disk again on the domain [-1,1]^2. Using Ngauss = 4, how many intervals must be used to obtain π with an absolute accuracy of 10-5 ? Is the error uniformly decreasing ?
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>
