@@ -1,3 +1,15 @@
+// Modify your program to find all of the zeros of the function:
+// sin(x) - ( x*x/100. + x/5. + 1./3. )
+// by first using a bracketing function and then any of the root finder methods to refine the search. This function has five roots in the interval [-10,10], corresponding to:
+// -8.716925e+00
+// -6.889594e+00
+// -2.968485e+00
+// 4.361680e-01
+// 2.183971e+00
+// 
+// Are you able to find them all ? Which root-finder performs the best ?
+// 
+
 #include "root_finders.h"
 
 double func(double);

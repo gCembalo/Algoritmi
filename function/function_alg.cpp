@@ -10,6 +10,8 @@ using namespace std;
 // includo l'header
 #include "function_alg.h"
 
+int g_LegendreN; // variabile che serve nel capitolo 5 per i polinomi di Legendre
+
 // Dichiarazione delle funzioni in base alla lezione. Potrebbero esserci funzioni definite più volte, quindi è sempre meglio controllare, non solo il funzionamento, ma anche la sintassi con cui le si chiama
 
 
@@ -712,12 +714,574 @@ double gaussiana(const double &x, const double &sigma){
 
 //-------------------------------------------------- 5-Root_finders ---------------------------------------------------------//
 
+
+// ------------ root finders function ------------- //
+
+// metodo della bisezione
+// gli do in input la funzione, gli estremi a e b, la tolleranza su x, uno zero per riferimento e il numero di iterazioni
+int bisection(double (*F)(double), double a, double b, double tol, double &zero, int &l){
+
+    double x; // la mia guess dello zero che aggiorno ad ogni iterazione
+    int n = 0; // la variabile che mi permette di contare le iterazioni
+
+    // definisco le variabili della funzione valutata
+    double fa = F(a);
+    double fb = F(b);
+    double fx;
+
+    // metto i controlli di non avere già uno zero
+    if( fa == 0.0 ){
+
+        zero = a;
+
+        // creo l'output delle iterazioni
+        cout << "(Bisection) # = " << n << "    (l'estremo " << a << " è già lo zero)"<< endl;
+
+        l = n;
+        return 0;
+
+    }
+    else if( fb == 0.0 ){
+
+        zero = b;
+
+        // creo l'output delle iterazioni
+        cout << "(Bisection) # = " << n << "(l'estremo " << b << " è già lo zero)"<< endl;
+
+        l = n;
+        return 0;
+
+    }
+    else{
+
+        while( fabs(a-b) > tol ){
+        
+            n++;
+
+            // metto il controllo sul numero di iterazioni
+            if( n == 100 ){
+
+                cout << "(Bisection) Troppe iterazioni." << endl;
+
+                l = n;
+                return 0;
+
+            }
+
+            // calcolo la prima stima dello zero
+            x = ( a+b ) / 2;
+
+            // definisco le variabili delle funzioni valutate
+            fa = F(a);
+            fb = F(b);
+            fx = F(x);
+
+            // controllo se è uno zero
+            if( fx == 0 ){
+
+                zero = x;
+
+                // creo l'output delle iterazioni
+                //cout << "(Bisection) # = " << n << endl;
+
+                l = n;
+                return 0;
+
+            }
+            // controllo dove si trova x rispetto gli estremi a e b
+            else if( fa*fx < 0 ){
+
+                b = x;
+
+            }
+            else if ( fa*fx > 0 ){
+
+                a = x;
+
+            }
+
+            // creo l'output voluto (esercizio froot.cpp)
+            //cout << "n = " << n << ";   [a,b] = [" << a << ", " << b << "];    xm = " << x << ";   Deltax = " << fabs(a-b) << ";   f(xm) = " << F(x) << endl;
+
+        }
+
+        // creo l'output delle iterazioni
+        //cout << "(Bisection) # = " << n << endl;
+
+        l = n; // sono le iterazioni
+        zero = x;
+        return 0;
+
+    }
+
+}
+
+// metodo della false position
+// gli do in input la funzione, gli estremi a e b, la tolleranza su x, uno zero per riferimento e il numero di iterazioni
+int false_position(double (*F)(double), double a, double b, double tol, double &zero, int &l){
+
+    double x = 3; // la guess di zero della funzione
+    double xk = 0; // variabile che mi serve per la tolleranza
+    double m, q; // parametri della retta
+    int n = 0; // variabile per contare
+
+    // definisco le variabili della funzione valutata
+    double fa = F(a);
+    double fb = F(b);
+    double fx;
+
+    // metto i controlli di non avere già uno zero
+    if( fa == 0.0 ){
+
+        zero = a;
+
+        // creo l'output delle iterazioni
+        cout << "(False position) # = " << n << "    (l'estremo " << a << " è già lo zero)"<< endl;
+
+        l = n;
+        return 0;
+
+    }
+    else if( fb == 0.0 ){
+
+        zero = b;
+
+        // creo l'output delle iterazioni
+        cout << "(False position) # = " << n << "(l'estremo " << b << " è già lo zero)"<< endl;
+        
+        l = n;
+        return 0;
+
+    }
+    else{
+        // metto nel ciclo la condizione sia sulla tolleranza che sul numero di cicli (inserita dopo)
+        while( fabs( x - xk ) > tol ){
+        
+            n++;
+            fa = F(a);
+            fb = F(b);
+
+            if( n == 100 ){
+
+                cout << "(False position) Troppe iterazioni." << endl;
+
+                l = n;
+                return 0;
+
+            }
+
+            xk = x;
+        
+            // trovo la retta
+            m = ( fa - fb ) / (a - b);
+            q = ( fb*a - fa*b ) / (a - b);
+            // trovo lo zero della retta e lo chiamo x
+            x = - q / m;
+
+            fx = F(x);
+
+            // controllo dove si trova x rispetto gli estremi a e b
+            if( fa*fx < 0 ){
+
+                b = x;
+
+            }
+            else if ( fa*fx > 0 ){
+
+                a = x;
+
+            }
+
+            // creo l'output voluto (esercizio froot.cpp)
+            //cout << "n = " << n << ";   [a,b] = [" << a << ", " << b << "];    xm = " << x << ";   Deltax = " << fabs(a-b) << ";   f(xm) = " << F(x) << endl;
+
+        }
+
+        // creo l'output delle iterazioni
+        //cout << "(False position) # = " << n << endl;
+
+        l = n; // sono le iterazioni
+        zero = x;
+        return 0;
+
+    }
+}
+
+// metodo della secante
+// gli do in input la funzione, gli estremi a e b, la tolleranza su x, uno zero per riferimento e il numero di iterazioni
+int secant_method(double (*F)(double), double a, double b, double tol, double &zero, int &l){
+
+    // definisco le variabili che mi servono per tenere traccia delle varie iterazioni di x
+    double xk1 = a, xk = b, xk2 = xk + 1; // dove uso xk come x_k, xk1 come x_{k-1} e xk2 come x_{k+1} ; inizializzo gli zeri sugli estremi dell'intervallo in cui ricaviamo la retta
+    int n = 0; // variabile per contare
+    double xp = 0; // una variabile di controllo per vedere di quanto miglioriamo la guess
+
+    // definisco le variabili della funzione valutata
+    double fa = F(a);
+    double fb = F(b);
+    double fxk;
+    double fxk1;
+
+    // metto i controlli di non avere già uno zero
+    if( fa == 0.0 ){
+
+        zero = a;
+
+        // creo l'output delle iterazioni
+        cout << "(Secant) # = " << n << "    (l'estremo " << a << " è già lo zero)" << endl;
+
+        l = n; // sono le iterazioni
+        return 0;
+
+    }
+    else if( fb == 0.0 ){
+
+        zero = b;
+
+        // creo l'output delle iterazioni
+        cout << "(Secant) # = " << n << "(l'estremo " << b << " è già lo zero)"<< endl;
+
+        l = n; // sono le iterazioni
+        return 0;
+
+    }
+    else{
+        
+        // metto nel ciclo la condizione sia sulla tolleranza che sul numero di cicli (messo dopo)
+        while( fabs( xk2 - xp ) > tol ){
+
+            n++;
+
+            if( n == 100 ){
+
+                cout << "(Secant) Troppe iterazioni." << endl;
+
+                l = n; // sono le iterazioni
+                return 0;
+
+            }
+
+            xp = xk2;
+            fxk = F(xk);
+            fxk1 = F(xk1);
+
+            // calcolo lo zero x_{k+1}
+            xk2 = xk - fxk*( xk - xk1 )/( fxk - fxk1 );
+
+            xk1 = xk;
+            xk = xk2;
+
+            // creo l'output voluto (esercizio froot.cpp)
+            //cout << "n = " << n << ";   [a,b] = [" << xk1 << ", " << xk << "];    x0 = " << xk2 << ";   Deltax = " << fabs(xk2-xk1) << ";   f(x0) = " << F(xk2) << endl;
+
+        }
+
+        // creo l'output delle iterazioni
+        //cout << "(Secant) # = " << n << endl;
+
+        l = n; // sono le iterazioni
+        zero = xk2;
+        return 0;
+
+    }
+
+}
+
+// metodo di Newton
+// gli do in input la funzione, la derivata, gli estremi a e b, la tolleranza su x, la tolleranza su y, uno zero per riferimento e il numero di iterazioni
+int newton_method(double (*F)(double), double (*derF)(double), double a, double b, double xtol, double ytol, double &zero, int &l){
+
+    int n = 0; // variabile per contare
+
+    // controllo che gli estremi non siano già degli zeri
+    double fa = F(a), fb = F(b);
+
+    if( fabs(fa) < ytol ){
+
+        zero = a;
+
+        // creo l'output delle iterazioni
+        cout << "(Newton) # = " << n << "    (l'estremo " << a << " è già lo zero)"<< endl;
+
+        return 0;
+
+    }
+
+    if( fabs(fb) < ytol ){
+        
+        zero = b;
+        // creo l'output delle iterazioni
+        cout << "(Newton) # = " << n << "    (l'estremo " << b << " è già lo zero)"<< endl;
+
+        return 0;
+
+    }
+
+    // definisco delle variabili utili all'algoritmo
+    double Deltax = fabs( b-a ); // l'ampiezza dell'intervallo inziale
+    double deltax = Deltax * 0.5; // la nuova ampiezza (inizializzata)
+    double x = ( a + b )*0.5; // la mia prima guess, che prendo a metà dell'intervallo
+    double fx = F(x); // funzione valutata nella guess
+
+    // faccio il ciclo per il metodo di Newton, con i controlli su x, su y e sul numero di iterazioni (nel mezzo del while)
+    while( fabs(deltax) > xtol && fabs(fx) > ytol ){
+
+        n++;
+
+        // blocco il ciclo se raggiungo troppe iterazioni
+        if( n == 100 ){
+
+            cout << "(Newton) Troppe iterazioni. (" << l << ")" << endl;
+            l = n; // sono le iterazioni
+            return 0;
+
+        }
+
+        // metto un controllo sugli intervalli, che mi blocca il ciclo se la nuova ampiezza deltax è maggiore di quella precedente. Mi blocca se cominciamo a non convergere
+        if( fabs(deltax) > fabs(Deltax) ){
+
+            zero = x;
+            l = n;
+
+            return 0;
+
+        }
+
+        // controllo anche di non uscire dal mio intervallo di estremi a e b
+        if( x < a || x > b ){
+
+            cout << "(Newton) il metodo non converge." << endl;
+
+            return 0;
+
+        }
+
+        // calcolo la derivata e controllo che non sia nulla (troppo piccola)
+        double df = derF(x);
+
+        if( fabs( df ) < 1.e-15 ){
+
+            cout << "(Newton) Errore: derivata troppo piccola.\n" << endl;
+
+            l = n; // sono le iterazioni
+            return 0;
+            
+        }
+
+        // superati tutti i controlli implemento il metodo
+        Deltax = deltax;
+        deltax = fx / df;
+        // calcolo la nuova guess
+        x = x - deltax;
+        // ricalcolo la funzione nella guess
+        fx = F(x);
+
+    }
+
+    // creo l'output delle iterazioni (esercizio froot.cpp)
+    //cout << "(Newton) # = " << n << endl;
+
+    l = n; // sono le iterazioni
+    zero = x;
+    return 0;
+
+}
+
+// bracketing function
+// gli do in input la funzione, gli estremi a e b, il numero di intervalli, un array per gli estremi (sinistro e destro) degli intervalli, e un riferimento al numero di zeri
+int Bracket(double (*F)(double), double a, double b, double n, double *xL, double *xR, int &nroots){
+
+    // definisco le variabili che uso per contare
+    int count = 0, i; // count mi dice quanti zeri ho
+    double dx = ( b - a )/(double)n; // spacing
+    double aL, aR; // estremi di ogni sotto intervallo
+
+    double fL, fR; // valori delle funzioni valutate agli estremi
+    fL = F(a);
+
+    // faccio il loop su tutti gli intervalli
+    for( i = 0 ; i < n ; i++ ){
+
+        aL = a + i*dx;
+        aR = a + (i+1)*dx;
+
+        // metto la condizione in cui abbiamo un cambiamento di segno e quindi con la quale ci ricordiamo il valore
+        fR = F(aR);
+        if( fL*fR <= 0.0 ){
+
+            // metto gli estremi nell'array
+            xL[count] = aL;
+            xR[count] = aR;
+            count++; // aggiorno il numero di roots
+
+        }
+        
+        fL = fR;
+
+    }
+
+    nroots = count;
+    return 0;
+
+}
+
+
+
 // ------------------ froot.cpp ------------------- //
+
+double funcFroot(double &x){
+
+    return exp(-x) - x;
+
+}
+
+double derfuncFroot(double &x){
+
+    return -exp(-x) - 1;
+
+}
+
 
 // ------------------ horner.cpp ------------------- //
 
+// funzione polinomio
+double pol(double x){
+    
+    // definisco l'array e il polinomio
+    double a[4] = {5, 1, -3, 1};
+    // inizializzo p come a_n
+    double p = a[3];
+
+    // valuto il polinomio con il metodo di horner
+    for( int j = 3-1 ; j >= 0 ; j-- ){
+
+        // moltiplico per x il termine in p
+        p = a[j] + p*x;
+
+    }
+
+    return p;
+}
+
+// funzione derivata del polinomio
+double derpol(double x){
+
+    // definisco l'array e il polinomio (derivata)
+    double a[3] = {1, -6, 3}; // coefficienti della derivata
+    //double a[4] = {5, 1, -3, 1}; // i coefficienti del polinomio
+    // inizializzo der_p come a_n
+    double dp = a[2];
+
+    // valuto il polinomio con il metodo di horner
+    for( int j = 2-1 ; j >= 0 ; j-- ){
+
+        // moltiplico per x il termine in p
+        dp = a[j] + dp*x;
+        
+    }
+
+    return dp;
+}
+
+
 // ------------------ session4.cpp ------------------- //
+
+double funcSes4(double x){
+
+    return exp( 1/( x + 0.5 ) ) - ( 3 + 2*x )/( 1 + x );
+
+}
+
+double derfuncSes4(double x){
+
+    return - 1 / ((x + 0.5)*(x+0.5)) * exp( 1 / (x + 0.5)) + 1 / ((1+x) * (1+x));
+
+}
 
 // ------------------ froot.cpp ------------------- //
 
+double funcSin(double x){
+    
+    return sin(x) - ( x*x/100. + x/5. + 1./3. );
+
+}
+
+double derfuncSin(double x){
+    
+    return cos(x) - ( x/50. + 1./5. );
+
+}
+
 // ------------------ legendre.cpp ------------------- //
+/*
+// polinomio di Legendre
+double polLegendre(double x){
+
+    if (g_LegendreN == 0){
+        return 1.;
+    }
+
+    if (g_LegendreN == 1){
+        return x;
+    }
+
+    // definisco i polinomi 0 e 1
+    double P0 = 1., Pi = x, Pi1;  // P0 è P_0 ; Pi è P_n ; Pi1 è P_{n+1}
+
+    for( int i = 1 ; i < g_LegendreN ; i++ ){
+
+        Pi1 = ( (2.0 * i + 1.0) * x * Pi - i * P0 ) / ( i+1.0 );
+
+        // Aggiorno i valori
+        P0 = Pi;
+        Pi = Pi1;
+       
+    }
+
+    return Pi1;
+
+}
+
+// derivata polinomio di Legendre
+double derpolLegendre(double x){
+
+    if (g_LegendreN == 0.0){
+        return 0.0;
+    }
+
+    if (g_LegendreN == 1.0){
+        return 1.0;
+    }
+
+    double P0 = 1.0; // P0(x)
+    double P1 = x; // P1(x)
+    double Pi1; // P_{n+1}
+
+    // stesso ciclo della funzione del polinomio
+    for( int i = 1 ; i < g_LegendreN ; i++ ){
+
+        Pi1 = ( (2.0 * i + 1.0) * x * P1 - i * P0 ) / ( i + 1.0 );
+
+        // aggiorno i valori
+        P0 = P1;
+        P1 = Pi1;
+
+    }
+
+    // uso la formula per la derivata
+    double dPi = ( g_LegendreN * (x * P1 - P0) ) / ( x * x - 1.0 );
+
+    return dPi;
+    
+}
+
+// pesi dei polinomi di Legendre
+double wi(double x){
+
+    return 2.0/( ( 1.0-x*x )*( derpolLegendre(x)*derpolLegendre(x) ) );
+
+}*/
+
+
+
+//-------------------------------------------------- 6- ---------------------------------------------------------//

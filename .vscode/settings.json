@@ -4,6 +4,7 @@
         "cmath": "cpp",
         "ios": "cpp",
         "iomanip": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "__locale": "cpp"
     }
 }

@@ -1,3 +1,13 @@
+// Consider the function f(x) = x^3 - 3x^2 + x + 5
+// This function has a root in x = -1. Repeat the search over the interval [-5,0]. The following table gives the number of iterations obtained with the different methods using a tolerance 10-8:
+// Bisection: 30
+// False position: 80
+// Secant: 12
+// Newton: 6
+//
+// Can you explain why False Position performs so badly ? What happens when the initial interval is reduced to [-2,0] ?
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>

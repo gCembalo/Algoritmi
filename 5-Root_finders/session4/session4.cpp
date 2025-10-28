@@ -1,3 +1,12 @@
+// Consider the function:
+// exp( 1/( x + 0.5 ) ) - ( 3 + 2*x )/( 1 + x )
+// Search the zero over the interval [0,2] with tolerance 10-7. The solution is x0 ≈ 5.235934e-01 Any problem ? Explain.
+// Bisection: 26
+// False position: 55
+// Secant: ??
+// Newton: 8
+//
+
 // includo le funzioni di root finding
 #include "root_finders.h"
 // definisco le funzioni che studio

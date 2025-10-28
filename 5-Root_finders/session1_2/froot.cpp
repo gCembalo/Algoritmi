@@ -1,3 +1,22 @@
+//                  Practice session 1
+// 
+// write a program that finds the zero of the trial function:
+// f(x) = e^{-x} - x
+// using both bisection and false position methods.
+//
+// From the plot in the figure it is clear that a single zero occurs in the interval [-1,1]. Make sure to write your function in a rather general (read “re-usable”) way.
+//
+// How many iterations are necessary to reach a tolerance 10-7 ? What happens if the initial interval is 10 times larger ?
+//
+
+//                  Practice session 2
+//
+// Add Newton and Secant method to froot.cpp and compare the number of iterations with Bisection and False Position. Note that, for an efficient realization of Newton-Raphson, the user should provide not only the function f(x) but also its first derivative f’(x) at the desired point x.
+//
+// The output of the secant algorithm (using [a,b]=[-1,1] and a tolerance of 10-7) should read as the one in the slide.
+//
+
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>
@@ -84,6 +103,7 @@ double derfunc(double &x){
 }
 
 void bisection(double (*F)(double &), double a, double b, double tol, double &zero){
+    
     double x; // la mia guess dello zero che aggiorno ad ogni iterazione
     int n=0; // la variabile che mi permette di contare le iterazioni
 

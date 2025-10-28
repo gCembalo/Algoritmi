@@ -12,6 +12,8 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <fstream>
+
 using namespace std;
 
 // Dichiarazione delle funzioni in base alla lezione. Potrebbero esserci funzioni definite più volte, quindi è sempre meglio controllare, non solo il funzionamento, ma anche la sintassi con cui le si chiama
@@ -85,12 +87,44 @@ void ConvergenceGauss(double (*F)(double, double), double , double , double , do
 
 //-------------------------------------------------- 4-Random_numbers ---------------------------------------------------------//
 
-// distribuzione gaussiana
+// gauss_distrib.cpp
 double gaussiana(const double&, const double&);
 
 
 
 //-------------------------------------------------- 5-Root_finders ---------------------------------------------------------//
+
+// funzioni uguali per tutti i file del capitolo.
+// metodi di root finding
+int bisection(double (*F)(double), double, double, double, double&, int &);
+int false_position(double (*F)(double), double, double, double, double&, int &);
+int secant_method(double (*F)(double), double, double, double, double &, int &);
+int newton_method(double (*F)(double), double (*derF)(double), double, double, double, double, double &, int &);
+
+// metodo di bracketing
+int Bracket(double (*F)(double), double a, double b, double n, double *xL, double *xR, int &nroots);
+
+
+// froot.cpp
+double funcFroot(double &);
+double derfuncFroot(double &);
+
+// horner.cpp
+double pol(double);
+double derpol(double);
+
+// session4.cpp
+double funcSes4(double);
+double derfuncSes4(double);
+
+// froot.cpp
+double funcSin(double);
+double derfuncSin(double);
+
+// legendre.cpp
+double polLegendre(double);
+double derpolLegendre(double);
+double wi(double);
 
 
 

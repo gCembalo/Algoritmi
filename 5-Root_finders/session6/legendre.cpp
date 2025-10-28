@@ -1,3 +1,10 @@
+// write a code that can found the zero of Legendre polynomial of arbitrary order n. In order to evaluate Pn(x) use Bonnet’s recursion formula written in the slide.
+//
+// with P0(x) = 1, P1 (x)= x. For Newton-Raphson method, the derivative may be computed in terms of Pn(x) and Pn-1(x) through (the formula in the slide).
+//
+// Now that you have found the roots with high precision, you may use them to produce your Gaussian weights (written in the slide).
+//
+
 #include "root_finders.h"
 
 double polLegendre(double);
