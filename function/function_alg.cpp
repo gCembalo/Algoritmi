@@ -1228,7 +1228,7 @@ double polLegendre(double x){
         return x;
     }
 
-    // definisco i polinomi 0 e 1
+    // definisco i polinomi
     double P0 = 1., Pi = x, Pi1;  // P0 è P_0 ; Pi è P_n ; Pi1 è P_{n+1}
 
     for( int i = 1 ; i < g_LegendreN ; i++ ){
