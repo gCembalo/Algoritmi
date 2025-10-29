@@ -154,6 +154,8 @@ double Gauss(double (*F)(double), double a, double b, int N, int ng){
             double x1 = x0 + h;
             double s1 = (x1-x0)/2;
             double s2 = (x1+x0)/2;
+            // azzero il conteggio di sumj
+            sumj = 0.0;
             for(int j=0; j<ng; j++){
                 sumj += s1 * w[j] * F( s1*x[j] + s2 );
             }

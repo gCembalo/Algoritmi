@@ -505,6 +505,9 @@ double Gauss(double (*F)(double), double a, double b, int N, int ng){
             double s1 = (x1-x0)/2;
             double s2 = (x1+x0)/2;
 
+            // azzero il conteggio di sumj
+            sumj = 0.0;
+
             // calcolo l'integrale su ng punti di Gauss
             for( int j=0 ; j<ng ; j++ ){
 
@@ -1213,7 +1216,7 @@ double derfuncSin(double x){
 }
 
 // ------------------ legendre.cpp ------------------- //
-/*
+
 // polinomio di Legendre
 double polLegendre(double x){
 
@@ -1280,7 +1283,7 @@ double wi(double x){
 
     return 2.0/( ( 1.0-x*x )*( derpolLegendre(x)*derpolLegendre(x) ) );
 
-}*/
+}
 
 
 
