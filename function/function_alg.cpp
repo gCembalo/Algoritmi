@@ -122,8 +122,7 @@ void altQuad(const double& x, const double& y, const double& z, double& s3, doub
         // calcolo l'errore
         epsilong = fabs( Wng - Wn2g );
         // sovrascrivo il valore di W_{n/2}
-        Wn2g = Wng;
-    }
+        Wn2g = Wng; }
     // implemento il ciclo di Trapezio (volendo puoi mettere nel while la condizione && nt < 1000 per bloccare i cicli a nt = 1000 sottointervalli )
     while( epsilont > tol  ){
         // calcolo W_{n} raddoppiando i sottointervalli
@@ -132,8 +131,7 @@ void altQuad(const double& x, const double& y, const double& z, double& s3, doub
         // calcolo l'errore
         epsilont = fabs( Wnt - Wn2t );
         // sovrascrivo il valore di W_{n/2}
-        Wn2t = Wnt;
-    }
+        Wn2t = Wnt; }
     cout << "Trapezoidal:   n = " << nt << ";       W = " << Wnt << endl;
     cout << "Gaussian   :   n = " << ng << ";       W = " << Wng << endl;
     // usando il teorema delle forze conservative:
@@ -142,11 +140,8 @@ void altQuad(const double& x, const double& y, const double& z, double& s3, doub
     cout << "Il risultato esatto è: " << work << endl;
     cout << "Discostamento (trapezoidal): " << fabs(Wnt - work) << endl;
     cout << "Discostamento (gauss)      : " << fabs(Wng - work) << endl;
-    return 0;}
-*/
-/*
-double integrand(double theta){
-    // l'integrale da fare è:
+    return 0; }
+double integrand(double theta){ // l'integrale da fare è:
     //      \int \vec{F}_{grav} * ds
     // con ds = \hat{r} dr , dunque l'integranda è:
     //      F_{grav} dr
@@ -163,8 +158,7 @@ double integrand(double theta){
     double force = - (double)r0/( r_theta * r_theta ); // forza
     double derForce = - exp( -theta/b )*( (double)r0 * theta )/( b*b );
     // restituisco la funzione da integrare
-    return force*derForce;//*r_theta*r_theta;
-}*/
+    return force*derForce;//*r_theta*r_theta; }*/
 // --------------------------------------- //
 
 // funzione che in base al segno del coefficiente b seleziona un metodo risolutivo piuttosto che l'altro
@@ -230,35 +224,25 @@ void ordsolQuad(double& x1, double& x2){
 // potenziali e quanto variabili globali
 // definisci tolleranza, gli zeri e le iterazioni dei metodi. Definisci anche due variabili che ti fanno da estremi
 // stampo a video gli zeri trovati con i due metodi
-/*    cout << "\n+-----------------------------------------+" << endl;
-    cout << "Bisection, results:" << endl;
-    for( s = 1 ; s <= 3 ; s++ ){
-        // intervalli che definisco per ridurre leggermente 0<E<80; da una prima compilazione vedo che il secondo 0 è a 28, per cui il primo sarà sicuramente minore.
+/*  cout << "Bisection, results:" << endl;
+    for( s = 1 ; s <= 3 ; s++ ){ // intervalli che definisco per ridurre leggermente 0<E<80; da una prima compilazione vedo che il secondo 0 è a 28, per cui il primo sarà sicuramente minore.
         double a = ( (s - 1) * 20.0 + 1.0 );
         double b = s * 25.0;
         // richiamo la funzione
         bisection(Energy, a, b, tol, x1, l1);
         // stampo l'output
-        cout << "s = " << s << "; Root: " << x1 << "; ntry = " << l1 << endl;
-    }
+        cout << "s = " << s << "; Root: " << x1 << "; ntry = " << l1 << endl;}
     cout << "Secant, results:" << endl;
-    for( s = 1 ; s <= 3 ; s++ ){
-        // intervalli che definisco per ridurre leggermente 0<E<80; da una prima compilazione vedo che il secondo 0 è a 28, per cui il primo sarà sicuramente minore.
+    for( s = 1 ; s <= 3 ; s++ ){ // intervalli che definisco per ridurre leggermente 0<E<80; da una prima compilazione vedo che il secondo 0 è a 28, per cui il primo sarà sicuramente minore.
         double a = ( (s - 1) * 20.0 + 1.0 );
         double b = s * 25.0;
         // richiamo la funzione
         secant_method(Energy, a, b, tol, x2, l2);
         // stampo l'output
-        cout << "s = " << s << "; Root: " << x2 << "; ntry = " << l2 << endl;
-    }
+        cout << "s = " << s << "; Root: " << x2 << "; ntry = " << l2 << endl;}
 // definisco la funzione dei livelli energetici
-double Energy(double E){
-
-    return sqrt(E) - (double)s*M_PI + asin( sqrt( E/V1 ) ) + asin( sqrt( E/V2 ) );
-
-}
-// --------------------------------------- //
-*/
+double Energy(double E){ return sqrt(E) - (double)s*M_PI + asin( sqrt( E/V1 ) ) + asin( sqrt( E/V2 ) ); }
+// --------------------------------------- // */
 
 
 // Definizione funzione sqrt
@@ -310,13 +294,10 @@ double fcTaylor(const double& x){
 // ------------------ heron.cpp ------------------- //
 
 // --------------------------------------- //
-// definisco come variabile globale
-/*
+/*// definisco come variabile globale
 int ng = 5; // punti gaussiani
 double tlo = 0.0; // tempo iniziale
-
-int main(){
-    // definisco le costanti
+int main(){ // definisco le costanti
     double tol = 1.e-6; // tolleranza sia x che y
     // definisco le iterazioni
     int l;
@@ -327,13 +308,8 @@ int main(){
     newton_method(vel, acc, tlo, 10, tol, tol, inv, l);
     // stampo a terminale lo zero
     cout << "Inversion time (zero) = " << inv << endl;
-    return 0;
-}
-*/
-/*
-// funzione velocità
-double vel(double t){
-    static int nfv = 0; // Cumulative number of function evaluations
+    return 0;}
+double vel(double t){ static int nfv = 0; // Cumulative number of function evaluations
     // definisco le costanti che mi servono
     double v0 = -1.0; // velocità iniziale
     double thi = t;
@@ -344,13 +320,8 @@ double vel(double t){
     // stampo a terminale
     cout << "tlo = " << tlo << ";    thi = " << thi << ";    nint = " << nint << ";     Func eval = " << nfv << endl;
     // ritorno il valore di v(t)
-    return v0 + integral;
-}
-// funzione accelerazione
-double acc(double t){
-    return ( 1.0 - exp(-t) )/( sqrt( 1.0 + t*t*t*t ) );
-}
-*/
+    return v0 + integral;}
+double acc(double t){ return ( 1.0 - exp(-t) )/( sqrt( 1.0 + t*t*t*t ) ); } */
 // --------------------------------------- //
 
 
