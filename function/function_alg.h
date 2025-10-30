@@ -127,5 +127,23 @@ double derpolLegendre(double);
 double wi(double);
 
 
+//-------------------------------------------------- 6-Derivative ---------------------------------------------------------//
+
+// derivative.cpp
+double sinDer(double);
+double sinDerEx(double);
+double derFD(double (*)(double), double, double, double);
+double derBD(double (*)(double), double, double, double);
+double derCD(double (*)(double), double, double, double);
+double der4th(double (*)(double), double, double, double, double, double);
+
+// trajectory.cpp
+
+// le funzioni derivate (derFD , derBD , derCD , der4th) sono uguali a "derivative.cpp"
+double position(double);
+double velocity(double);
+double SecondDerivative(double (*)(double), double, double, double, double);
+
+
 
 #endif // fine del if della prima riga

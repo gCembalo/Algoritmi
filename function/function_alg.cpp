@@ -11,6 +11,7 @@ using namespace std;
 #include "function_alg.h"
 
 int g_LegendreN; // variabile che serve nel capitolo 5 per i polinomi di Legendre
+double alpha = 10.0; // definita da "trajectory.cpp" (cap. 06)
 
 // Dichiarazione delle funzioni in base alla lezione. Potrebbero esserci funzioni definite più volte, quindi è sempre meglio controllare, non solo il funzionamento, ma anche la sintassi con cui le si chiama
 
@@ -1289,4 +1290,97 @@ double wi(double x){
 
 
 
-//-------------------------------------------------- 6- ---------------------------------------------------------//
+//-------------------------------------------------- 6-Derivative ---------------------------------------------------------//
+
+// ------------------ derivative.cpp ------------------- //
+
+double sinDer(double x){
+
+    return sin(x);
+
+}
+
+double sinDerEx(double x){
+
+    return cos(x);
+
+}
+
+// x_i è x_{i} ; xp è x_{i+1} ; xm è x_{i-1} ; xmm è x_{i-2} ; xpp è x_{i+2}
+double derFD(double (*F)(double), double xi, double xp, double h){
+
+    // definisco 
+    double fiPrime = ( F(xp) - F(xi) )/h;
+
+    return fiPrime;
+
+}
+
+// x_i è x_{i} ; xp è x_{i+1} ; xm è x_{i-1} ; xmm è x_{i-2} ; xpp è x_{i+2}
+double derBD(double (*F)(double), double xi, double xm, double h){
+
+    // definisco 
+    double fiPrime = ( F(xi) - F(xm) )/h;
+
+    return fiPrime;
+
+}
+
+// x_i è x_{i} ; xp è x_{i+1} ; xm è x_{i-1} ; xmm è x_{i-2} ; xpp è x_{i+2}
+double derCD(double (*F)(double), double xm, double xp, double h){
+
+    // definisco 
+    double fiPrime = ( F(xp) - F(xm) )/( 2.0*h );
+
+    return fiPrime;
+
+}
+
+// x_i è x_{i} ; xp è x_{i+1} ; xm è x_{i-1} ; xmm è x_{i-2} ; xpp è x_{i+2}
+double der4th(double (*F)(double), double xmm, double xm, double xp, double xpp, double h){
+
+    // definisco 
+    double fiPrime = ( F(xmm) - 8.0*F(xm) + 8.0*F(xp) - F(xpp) )/( 12.0*h );
+
+    return fiPrime;
+
+}
+
+
+
+// ------------------ trajectory.cpp ------------------- //
+
+double position(double t){
+
+    // elimino la singolarità
+    if( t == 0 ){
+        return 0.;
+    }
+    else{
+        return alpha*t*t - t*t*t*( 1 - exp( -alpha*alpha/t ) );
+    }
+
+}
+
+// definisco la velocità che mi serve solo per la derivata seconda in 0 avendo il problema di due limiti diversi
+double velocity(double t){
+
+    // elimino la singolarità
+    if( t == 0 ){
+        return 0.;
+    }
+    else{
+        return 2*alpha*t - 3*t*t*( 1 - exp( -alpha*alpha/t ) ) + ( alpha*alpha*t )*exp( -alpha*alpha/t ) ;
+    }
+
+}
+
+// x_i è x_{i} ; xp è x_{i+1} ; xm è x_{i-1} ; xmm è x_{i-2} ; xpp è x_{i+2}
+double SecondDerivative(double (*F)(double x), double xi, double xm, double xp, double h){
+
+    // definisco
+    double fprimeprime = ( F(xp) - 2.0*F(xi) + F(xm) )/( h*h );
+
+    return fprimeprime;
+    
+}

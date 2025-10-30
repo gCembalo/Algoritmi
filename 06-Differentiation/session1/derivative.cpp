@@ -1,3 +1,8 @@
+// compute the numerical derivative f(x)=sin(x) in x=1 using FD, BD and CD (or higher) using different increments h=0.5,0.25,0.125, …
+//
+// Plot the error as a function of h using a log-log scaling.
+//
+
 #include <iostream>
 #include <iomanip>
 #include <cmath>
@@ -36,7 +41,7 @@ int main(){
     // definisco la spaziatura
     double h = 0.5; // poi lo dimezzerò ad ogni ciclo
     // definisco le mie x_i , x_{i-1} e x_{i+1}
-    double xi = 1.0 , xi1 , x1i , xi2 , x2i; // x_i è x_{i} ; xi1 è x_{i+1} ; x1i è x_{i-1} ; x2i è x_{i-2} ; xi2 è x_{i+2}
+    double xi = 1.0 , xm , xp , xmm , xpp; // x_i è x_{i} ; xp è x_{i+1} ; xm è x_{i-1} ; xmm è x_{i-2} ; xpp è x_{i+2}
 
     // definisco le variabili in cui metto i risultati delle derivate
     double ValderFD , ValderBD, ValderCD, Valder4th;
@@ -50,16 +55,16 @@ int main(){
     for( int i = 0 ; i <= 10 ; i++ ){
 
         // modifico i punti delle x
-        xi1 = xi + h;
-        x1i = xi - h;
-        x2i = xi - 2*h;
-        xi2 = xi + 2*h;
+        xp = xi + h;
+        xm = xi - h;
+        xmm = xi - 2*h;
+        xpp = xi + 2*h;
 
         // calcolo le derivate con i diversi metodi
-        ValderFD = derFD(sinDer, xi, xi1, h);
-        ValderBD = derBD(sinDer, xi, x1i, h);
-        ValderCD = derCD(sinDer, x1i, xi1, h);
-        Valder4th = der4th(sinDer, x2i, x1i, xi1, xi2, h);
+        ValderFD = derFD(sinDer, xi, xp, h);
+        ValderBD = derBD(sinDer, xi, xm, h);
+        ValderCD = derCD(sinDer, xm, xp, h);
+        Valder4th = der4th(sinDer, xmm, xm, xp, xpp, h);
 
         // calcolo il valore degli errori
         errDerFD = fabs( ValderFD - DerEx );
@@ -78,6 +83,11 @@ int main(){
 
     }
 
+    fdata1.close();
+    fdata2.close();
+    fdata3.close();
+    fdata4.close();
+
     return 0;
 
 }
@@ -95,41 +105,41 @@ double sinDerEx(double x){
 
 }
 
-// x_i è x_{i} ; xi1 è x_{i+1} ; x1i è x_{i-1}
-double derFD(double (*F)(double), double xi, double xi1, double h){
+// x_i è x_{i} ; xp è x_{i+1} ; xm è x_{i-1} ; xmm è x_{i-2} ; xpp è x_{i+2}
+double derFD(double (*F)(double), double xi, double xp, double h){
 
     // definisco 
-    double fiPrime = ( F(xi1) - F(xi) )/h;
+    double fiPrime = ( F(xp) - F(xi) )/h;
 
     return fiPrime;
 
 }
 
-// x_i è x_{i} ; xi1 è x_{i+1} ; x1i è x_{i-1}
-double derBD(double (*F)(double), double xi, double x1i, double h){
+// x_i è x_{i} ; xp è x_{i+1} ; xm è x_{i-1} ; xmm è x_{i-2} ; xpp è x_{i+2}
+double derBD(double (*F)(double), double xi, double xm, double h){
 
     // definisco 
-    double fiPrime = ( F(xi) - F(x1i) )/h;
+    double fiPrime = ( F(xi) - F(xm) )/h;
 
     return fiPrime;
 
 }
 
-// x_i è x_{i} ; xi1 è x_{i+1} ; x1i è x_{i-1}
-double derCD(double (*F)(double), double x1i, double xi1, double h){
+// x_i è x_{i} ; xp è x_{i+1} ; xm è x_{i-1} ; xmm è x_{i-2} ; xpp è x_{i+2}
+double derCD(double (*F)(double), double xm, double xp, double h){
 
     // definisco 
-    double fiPrime = ( F(xi1) - F(x1i) )/h;
+    double fiPrime = ( F(xp) - F(xm) )/( 2.0*h );
 
     return fiPrime;
 
 }
 
-// x_i è x_{i} ; xi1 è x_{i+1} ; x1i è x_{i-1} ; x2i è x_{i-2} ; xi2 è x_{i+2}
-double der4th(double (*F)(double), double x2i, double x1i, double xi1, double xi2, double h){
+// x_i è x_{i} ; xp è x_{i+1} ; xm è x_{i-1} ; xmm è x_{i-2} ; xpp è x_{i+2}
+double der4th(double (*F)(double), double xmm, double xm, double xp, double xpp, double h){
 
     // definisco 
-    double fiPrime = ( F(x2i) - 8.0*F(x1i) + F(xi1) - F(xi2) )/( 12.0*h );
+    double fiPrime = ( F(xmm) - 8.0*F(xm) + 8.0*F(xp) - F(xpp) )/( 12.0*h );
 
     return fiPrime;
 
