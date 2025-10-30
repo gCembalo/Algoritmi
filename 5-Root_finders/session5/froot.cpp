@@ -52,6 +52,21 @@ int main(){
 
     }
 
+    // stampo nel file il polinomio
+    ofstream fdata; // declare Output stream class to operate on files
+    fdata.open("froot.dat"); // open output file
+    //set the significant digits and the scientific notation
+    fdata << setprecision(7);
+    fdata << setiosflags ( ios::scientific );
+
+    for( double i = a ; i < b ; i += 1.e-3 ){
+
+        double sin = func(i);
+        fdata << i << "     " << sin << endl;
+
+    }
+    fdata.close();
+
     // definisco la variabile che mi da le iterazioni
     int l = 0;
     // stampo a terminale i risultati dei diversi metodi per trovare le radici
