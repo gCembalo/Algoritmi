@@ -74,7 +74,7 @@ int main(){
         fdata4 << 1.0/h << "     " << errDer4th << endl;
 
         // modifico il valore di h
-        h /= 2;
+        h /= 2.0;
 
     }
 
@@ -129,7 +129,7 @@ double derCD(double (*F)(double), double x1i, double xi1, double h){
 double der4th(double (*F)(double), double x2i, double x1i, double xi1, double xi2, double h){
 
     // definisco 
-    double fiPrime = ( F(x2i) - 8*F(x1i) + F(xi1) - F(xi2) )/( 12*h );
+    double fiPrime = ( F(x2i) - 8.0*F(x1i) + F(xi1) - F(xi2) )/( 12.0*h );
 
     return fiPrime;
 

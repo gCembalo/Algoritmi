@@ -16,4 +16,4 @@ plot \
     "FD.dat" using 1:2 with points pt 7 ps 0.4 lc rgb "red"  title "FD", \
     "BD.dat" using 1:2 with points pt 7 ps 0.4 lc rgb "blue" title "BD", \
     "CD.dat" using 1:2 with points pt 7 ps 0.4 lc rgb "green" title "CD", \
-    "4thorder.dat" using 1:2 with points pt 7 ps 0.4 lc rgb "red" title "4th"
+    "4thorder.dat" using 1:2 with points pt 7 ps 0.4 lc rgb "black" title "4th"
