@@ -18,8 +18,8 @@
 
 using namespace std;
 
-void EulerStep (double, double *, void (*)(double, double *, double *), double, int);
-void dYdt (double, double *,double *);
+void EulerStep(double, double *, void (*)(double, double *, double *), double, int);
+void RHSFuncOde1(double, double *,double *);
 double ode1Sol(double);
 
 int main(){
@@ -28,9 +28,8 @@ int main(){
     cout << setiosflags ( ios::scientific );
 
     ofstream fdata1, fdata2;
-    fdata1.open("ode1.dat");
-    // 
-    fdata2.open("ode1Ex.dat");
+    fdata1.open("ode1.dat"); // file per soluzione metodo di Eulero
+    fdata2.open("ode1Ex.dat"); // file per soluzione esatta
 
     //set the significant digits and the scientific notation
     fdata1 << setprecision(7);
@@ -67,11 +66,14 @@ int main(){
     // definisco la variabile per la soluzione esatta
     double SolEx;
 
+    // ciclo che ogni volta varia gli step (vedi array step[] )
     for( int k = 0 ; k < 9 ; k ++ ){
 
+        // tempo di integrazione
         tb = 0.0;
         te = 3.0;
 
+        // definisco gli step degli intervalli
         dt = step[k];
         nstep = ceil( fabs(tb - te) / dt );
 
@@ -85,15 +87,16 @@ int main(){
         abs_err = fabs( Y[0] - SolEx );
         rel_err = fabs( abs_err / SolEx );
 
-        // fdata1 << t << "  " << Y[0] << "  " << fabs( Y[0] - exp( -t*t/2.0 ) ) << "   " << fabs( Y[0]/exp( -t*t/2.0 ) - 1.0) << endl;
+        // stampo nel file (la condizione iniziale)
         fdata1 << t << "  " << Y[0] << "  " << abs_err << "   " << rel_err << endl;
 
+        // ciclo per determinare la soluzione con Eulero
         for( int i = 0 ; i < nstep ; i++ ){
 
-            EulerStep(t, Y, dYdt, dt, neq);
-            //SolEx = ode1Sol(t);
+            // richiamo il metodo di Eulero per trovare le soluzioni
+            EulerStep(t, Y, RHSFuncOde1, dt, neq);
 
-            t += dt;
+            t += dt; // implemento il tempo
 
             SolEx = ode1Sol(t); // soluzione esatta
 
@@ -101,28 +104,9 @@ int main(){
             abs_err = fabs( Y[0] - SolEx );
             rel_err = fabs( abs_err/SolEx );
 
-            // fdata1 << t << "  " << Y[0] << "  " << fabs( Y[0] - exp( -t*t/2.0 ) ) << "   " << fabs( Y[0]/exp( -t*t/2.0 ) - 1.0) << endl;
+            // stampo nel file
             fdata1 << t << "  " << Y[0] << "  " << abs_err << "   " << rel_err << endl;
         }
-
-        /*
-        // ciclo per h = 0.5
-        for( t = 0.0 ; t <= te ; t += h[k] ){
-
-            EulerStep(t, Y, dYdt, h[k], neq);
-            SolEx = ode1Sol(t);
-
-            // calcolo gli errori
-            abs_err = fabs( Y[0] - SolEx );
-            rel_err = abs_err/SolEx;
-
-            // stampo a terminale
-            cout << t << "  " << Y[0] << "  " << abs_err << "   " << rel_err << endl;
-
-            // stampo nel file
-            fdata1 << t << "     " << Y[0] << endl;
-
-        }*/
 
         // separo i diversi incrementi
         fdata1 << endl << endl;
@@ -135,17 +119,17 @@ int main(){
 
 }
 
-void EulerStep (double t, double *Y, void (*RHSFunc)(double, double *, double *), double dt, int neq){
+// implemento il metodo di Eulero. Gli do in input la variabile di integrazione, un puntatore alle soluzioni, un puntatore al Right-Hand-Side-Function, lo step da utilizzare e la dimensionalità di Y, che non è altro che il numero di ODE di primo ordine che abbiamo.
+void EulerStep(double t, double *Y, void (*RHSFunc)(double, double *, double *), double dt, int neq){
     
-    // Take one step dt using Euler method for the solution of dY/dt = rhs.
-    // Here neq is the number of ODE (the dimensionality of Y[]) and *RHSFunc() is a
-    // pointer to the actual function (in this case it points to dYdt()) that
-    // calculates the right-hand side of the system of equations.
+    // dt è lo step che utilizziamo per trovare la soluzione di dY/dt = rhs.
+    // neq è il numero di ODE (dimensionalità di Y[])
+    // *RHSFunc() punta al Right-Hand-Side-Function (in questo caso dYdt())
     
     int k; // variabile per visitare tutte le componenti di *Y
-    double rhs[256]; // Make sure rhs[] is large enough (this implies neq < 256)
-    // rhs[neq] is *NOT* standard C++ (forbidden as static declaration)
+    double rhs[256]; // per assicurarsi che rhs[] sia grande abbastanza (neq < 256)
 
+    // calcolo il lato destro dell'equazione
     RHSFunc (t, Y, rhs);
 
     for( k = 0 ; k < neq ; k++ ){
@@ -156,7 +140,8 @@ void EulerStep (double t, double *Y, void (*RHSFunc)(double, double *, double *)
 
 }
 
-void dYdt (double t, double *Y, double *R){
+// funzione problem dependent
+void RHSFuncOde1(double t, double *Y, double *R){
 
     // Compute the right-hand side of the ODE dy/dt = -t*y
     double y = Y[0];
@@ -164,6 +149,7 @@ void dYdt (double t, double *Y, double *R){
 
 }
 
+// soluzione esatta
 double ode1Sol(double t){
 
     return exp( -t*t/2 );

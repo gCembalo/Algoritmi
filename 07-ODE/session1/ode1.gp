@@ -26,7 +26,7 @@ replot "ode1.dat" using 1:2 index 8 with lines title "h=0.001"
 
 # plots Ode1 errore
 set term qt 2 size 600,400
-set title "Ode error"
+set title "Ode absolute error"
 set logscale y
 set xlabel "t"  font ",14"
 set ylabel "err_{abs}(t)"  font ",14"
@@ -50,7 +50,7 @@ replot "ode1.dat" using 1:3 index 8 with lines title "h=0.001"
 
 # plots Ode1 errore
 set term qt 3 size 600,400
-set title "Ode error"
+set title "Ode relative error"
 set logscale y
 set xlabel "t"  font ",14"
 set ylabel "err_{rel}(t)"  font ",14"
