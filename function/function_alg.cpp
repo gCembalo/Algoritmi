@@ -1384,3 +1384,187 @@ double SecondDerivative(double (*F)(double x), double xi, double xm, double xp, 
     return fprimeprime;
     
 }
+
+
+
+//-------------------------------------------------- 7-ODE ---------------------------------------------------------//
+
+
+// programmi utilizzati per tutte le esercitazioni
+
+// implemento il metodo di Eulero. Gli do in input la variabile di integrazione, un puntatore alle soluzioni, un puntatore al Right-Hand-Side-Function, lo step da utilizzare e la dimensionalità di Y, che non è altro che il numero di ODE di primo ordine che abbiamo.
+void EulerStep(double t, double *Y, void (*RHSFunc)(double, double *, double *), double dt, int neq){
+    
+    // dt è lo step che utilizziamo per trovare la soluzione di dY/dt = rhs.
+    // neq è il numero di ODE (dimensionalità di Y[])
+    // *RHSFunc() punta al Right-Hand-Side-Function (in questo caso dYdt())
+    
+    int k; // variabile per visitare tutte le componenti di *Y
+    double rhs[256]; // per assicurarsi che rhs[] sia grande abbastanza (neq < 256)
+
+    // calcolo il lato destro dell'equazione
+    RHSFunc (t, Y, rhs);
+
+    for( k = 0 ; k < neq ; k++ ){
+
+        Y[k] += dt*rhs[k]; // Update solution array
+
+    }
+
+}
+
+// implemento il metodo Runge-Kutta del secondo ordine (midpoint).
+// gli do in input la variabile di integrazione, il puntatore alle soluzioni, il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e l'ordine della ODE.
+void RK2StepMid(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R), double h, int neq){
+    
+    // definisco i vettori per gli step intermedi
+    double Y1[neq], k1[neq], k2[neq];
+    
+    RHSFunc(t,Y,k1); // calcolo k1 con il RSH con t_n e Y_n
+
+    // scrivo il ciclo per determinare Y_n + k1*h/2
+    for( int i = 0 ; i < neq ; i++ ){
+        
+        Y1[i] = Y[i] + 0.5*h*k1[i];
+
+    }
+
+    RHSFunc(t+0.5*h,Y1,k2); // calcolo k2 con il RSH con t_n+h/2 e Y_n+k1*h/2
+    
+    // scrivo il ciclo per calcolare Y_{n+1} = Y_n + k2*h
+    for (int i = 0 ; i < neq ; i++){
+        
+        Y[i] += h*k2[i];
+
+    }
+
+}
+
+// implemento il metodo Runge-Kutta del secondo ordine (modified Eulero).
+// gli do in input la variabile di integrazione, il puntatore alle soluzioni, il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e l'ordine della ODE.
+void RK2StepHeun(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R), double h, int neq){
+    
+    // definisco i vettori per gli step intermedi
+    double Y1[neq], k1[neq], k2[neq];
+    
+    RHSFunc(t,Y,k1); // calcolo k1 con il RSH con t_n e Y_n
+
+    // scrivo il ciclo per determinare Y_n + k1*h
+    for( int i = 0 ; i < neq ; i++ ){
+        
+        Y1[i] = Y[i] + h*k1[i];
+
+    }
+
+    RHSFunc(t+h,Y1,k2); // calcolo k2 con il RSH con t_n+h e Y_n+k1*h
+    
+    // scrivo il ciclo per calcolare Y_{n+1} = Y_n + (k1+k2)*h/2
+    for (int i = 0 ; i < neq ; i++){
+        
+        Y[i] += ( k1[i] + k2[i] )*h*0.5;
+
+    }
+
+}
+
+// implemento il metodo Runge-Kutta del quarto ordine.
+// gli do in input la variabile di integrazione, il puntatore alle soluzioni, il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e l'ordine della ODE.
+void RK4Step(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R), double h, int neq){
+    
+    // definisco i vettori per gli step intermedi
+    double Y1[neq], k1[neq], k2[neq], k3[neq], k4[neq];
+    
+    RHSFunc(t,Y,k1); // calcolo k1 con il RSH con t_n e Y_n
+
+    // scrivo il ciclo per determinare Y_n + k1*h/2
+    for( int i = 0 ; i < neq ; i++ ){
+        
+        Y1[i] = Y[i] + 0.5*h*k1[i];
+
+    }
+
+    RHSFunc(t+0.5*h,Y1,k2); // calcolo k2 con il RSH con t_n+h/2 e Y_n+k1*h/2
+    
+    // scrivo il ciclo per calcolare Y_{n+1} = Y_n + k2*h/2
+    for (int i = 0 ; i < neq ; i++){
+        
+        Y1[i] = Y[i] + h*k2[i]*0.5;
+
+    }
+
+    RHSFunc(t+0.5*h,Y1,k3); // calcolo k3 con il RSH con t_n+h/2 e Y_n+k2*h/2
+    
+    // scrivo il ciclo per calcolare Y_{n+1} = Y_n + k3*h
+    for (int i = 0 ; i < neq ; i++){
+        
+        Y1[i] = Y[i] + h*k3[i];
+
+    }
+
+    RHSFunc(t+h,Y1,k4); // calcolo k4 con il RSH con t_n+h e Y_n+k3*h
+    
+    // scrivo il ciclo per calcolare Y_{n+1} = Y_n + h/6 * ( k1 + 2*k2 + 2*k3 + k4 )
+    for (int i = 0 ; i < neq ; i++){
+        
+        Y[i] += h * ( k1[i] + 2.0*k2[i] + 2.0*k3[i] + k4[i] ) / 6.0;
+
+    }
+
+}
+
+
+// ------------------ ode1.cpp ------------------- //
+
+// funzione problem dependent
+void RHSFuncOde1(double t, double *Y, double *R){
+
+    // Compute the right-hand side of the ODE dy/dt = -t*y
+    double y = Y[0];
+    R[0] = -t*y;
+
+}
+
+// soluzione esatta
+double ode1Sol(double t){
+
+    return exp( -t*t/2 );
+
+}
+
+// ------------------ ode2.cpp ------------------- //
+
+double ode2Sol(double t){
+
+    return cos(t);
+
+}
+// definisco il Right-Hand-Side-Function (è problem dependent). Gli do in input t e il puntatore ad Y e in uscita (tramite il puntatore) mi faccio dare R
+void RHSFuncOde2(double t, double *Y, double *R){
+
+    // Compute the right-hand side of the ODE (2 equation)
+    double x = Y[0];
+    double y = Y[1];
+    R[0] = y;
+    R[1] = -x;
+
+}
+
+// ------------------ kepler.cpp ------------------- //
+
+// definisco il Right-Hand-Side-Function (è problem dependent). Gli do in input t e il puntatore ad Y e in uscita (tramite il puntatore) mi faccio dare R
+void RHSFuncOde3(double t, double *Y, double *R){
+
+    // setto le condizioni iniziali
+    double x = Y[0];
+    double y = Y[1];
+    double vx = Y[2];
+    double vy = Y[3];
+
+    double r = sqrt( x*x + y*y );
+
+    R[0] = vx;
+    R[1] = vy;
+    R[2] = -x/( r*r*r );
+    R[3] = -y/( r*r*r );
+
+}

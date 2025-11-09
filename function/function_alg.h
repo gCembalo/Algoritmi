@@ -145,5 +145,25 @@ double velocity(double);
 double SecondDerivative(double (*)(double), double, double, double, double);
 
 
+//-------------------------------------------------- 7-ODE ---------------------------------------------------------//
+
+// funzioni generiche
+void EulerStep(double, double *, void (*)(double, double *, double *), double, int);
+void RK2StepMid(double, double *, void (*)(double, double *, double *), double, int);
+void RK2StepHeun(double, double *, void (*)(double, double *, double *), double, int);
+void RK4Step(double, double *, void (*)(double, double *, double *), double, int);
+
+// ode1.cpp
+void RHSFuncOde1(double, double *,double *);
+double ode1Sol(double);
+
+// ode2.cpp
+double ode2Sol(double);
+void RHSFuncOde2(double, double *,double *);
+
+// kepler.cpp
+void RHSFuncOde3(double, double *,double *);
+
+
 
 #endif // fine del if della prima riga
