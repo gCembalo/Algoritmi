@@ -18,7 +18,6 @@
 using namespace std;
 
 void RHSFuncOde3(double, double *,double *);
-void acc(double, double *, double *);
 void RK4Step(double, double *, void (*)(double, double *, double *), double, int);
 
 int main(){
@@ -140,21 +139,6 @@ void RHSFuncOde3(double t, double *Y, double *R){
     R[1] = vy;
     R[2] = -x/( r*r*r );
     R[3] = -y/( r*r*r );
-
-}
-
-// definisco il Right-Hand-Side-Function (è problem dependent) della ODE di ordine 1 $\dv{v}{t} = a(r)$ visto che devo fare uno studio dei punti di inversione
-void acc(double t, double *Y, double *R){
-
-    // setto le condizioni iniziali
-    double x = Y[0];
-    double y = Y[1];
-
-    double r = sqrt( x*x + y*y );
-
-    R[0] = -x/( r*r*r );
-    R[1] = -y/( r*r*r );
-    R[3] = 0.0;
 
 }
 
