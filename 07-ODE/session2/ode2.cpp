@@ -51,7 +51,7 @@ int main(){
     double te = 20.0*M_PI; // l'estremo di integrazione
     double dt; // incremento
 
-    int npoint =500; // numero di punti
+    int npoint = 500; // numero di punti
 
     // definisco le condizioni iniziali del problema
     Y[0] = 1.0;
