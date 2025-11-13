@@ -2,11 +2,13 @@
 // dy/dt = -ty ; y(0) = 1
 // This has analytical solution y = exp( -t*t/2 )
 //
-// Implement Euler’s method and try integrating from t = 0 up to t = 3 using different step sizes, e.g., h=0.5, 0.2, 0.1, 0.05, ..., 0.001.
+// Implement Euler’s method and try integrating from t = 0 up to t = 3 using
+// different step sizes, e.g., h=0.5, 0.2, 0.1, 0.05, ..., 0.001.
 //
 // The following table shows the numerical solution and errors for h = 0.5.
 //
-// Write ASCII data file showing the absolute and relative errors for each step size as a function of position. Comment on this.
+// Write ASCII data file showing the absolute and relative errors for each step
+// size as a function of position. Comment on this.
 //
 // Choose h = 1. What happens ?
 //
@@ -18,7 +20,8 @@
 
 using namespace std;
 
-void EulerStep(double, double *, void (*)(double, double *, double *), double, int);
+void EulerStep(double, double *, void (*)(double, double *, double *), 
+               double, int);
 void RHSFuncOde1(double, double *,double *);
 double ode1Sol(double);
 
@@ -46,7 +49,8 @@ int main(){
     fdata2.close();
 
     // definisco la spaziatura
-    double step[] = {0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002, 0.001}; // poi metterò le componenti in un ciclo così da variarlo
+    // poi metterò le componenti in un ciclo così da variarlo
+    double step[] = {0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005, 0.002, 0.001}; 
 
     int neq = 1; // ordine della ode
 
@@ -88,7 +92,8 @@ int main(){
         rel_err = fabs( abs_err / SolEx );
 
         // stampo nel file (la condizione iniziale)
-        fdata1 << t << "  " << Y[0] << "  " << abs_err << "   " << rel_err << endl;
+        fdata1 << t << "  " << Y[0] << "  " << abs_err << "   " 
+               << rel_err << endl;
 
         // ciclo per determinare la soluzione con Eulero
         for( int i = 0 ; i < nstep ; i++ ){
@@ -105,7 +110,8 @@ int main(){
             rel_err = fabs( abs_err/SolEx );
 
             // stampo nel file
-            fdata1 << t << "  " << Y[0] << "  " << abs_err << "   " << rel_err << endl;
+            fdata1 << t << "  " << Y[0] << "  " << abs_err << "   " 
+                   << rel_err << endl;
         }
 
         // separo i diversi incrementi
@@ -119,15 +125,20 @@ int main(){
 
 }
 
-// implemento il metodo di Eulero. Gli do in input la variabile di integrazione, un puntatore alle soluzioni, un puntatore al Right-Hand-Side-Function, lo step da utilizzare e la dimensionalità di Y, che non è altro che il numero di ODE di primo ordine che abbiamo.
-void EulerStep(double t, double *Y, void (*RHSFunc)(double, double *, double *), double dt, int neq){
+// implemento il metodo di Eulero. Gli do in input la variabile di integrazione,
+// un puntatore alle soluzioni, un puntatore al Right-Hand-Side-Function, lo
+// step da utilizzare e la dimensionalità di Y, che non è altro che il numero
+// di ODE di primo ordine che abbiamo.
+void EulerStep(double t, double *Y, void (*RHSFunc)(double, double *, double *),
+               double dt, int neq){
     
     // dt è lo step che utilizziamo per trovare la soluzione di dY/dt = rhs.
     // neq è il numero di ODE (dimensionalità di Y[])
     // *RHSFunc() punta al Right-Hand-Side-Function (in questo caso dYdt())
     
     int k; // variabile per visitare tutte le componenti di *Y
-    double rhs[256]; // per assicurarsi che rhs[] sia grande abbastanza (neq < 256)
+    double rhs[256]; // per assicurarsi che rhs[] sia grande
+                     // abbastanza (neq < 256)
 
     // calcolo il lato destro dell'equazione
     RHSFunc (t, Y, rhs);

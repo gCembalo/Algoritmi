@@ -16,10 +16,12 @@
 
 using namespace std;
 
-// Dichiarazione delle funzioni in base alla lezione. Potrebbero esserci funzioni definite più volte, quindi è sempre meglio controllare, non solo il funzionamento, ma anche la sintassi con cui le si chiama
+// Dichiarazione delle funzioni in base alla lezione. Potrebbero esserci 
+// funzioni definite più volte, quindi è sempre meglio controllare, non solo 
+// il funzionamento, ma anche la sintassi con cui le si chiama.
 
 
-//-------------------------------------------------- 1-Introduzione ---------------------------------------------------------//
+//-------------------------- 1-Introduzione ---------------------------------//
 
 // practice2.cpp
 double sum(double, double);
@@ -27,7 +29,7 @@ double addone(double);
 int Quotient(int, int, int&, int&);
 
 
-//-------------------------------------------------- 2-Precision ---------------------------------------------------------//
+//--------------------------- 2-Precision ----------------------------------//
 
 // quadratic.cpp
 void datiQuad(double&, double&, double&);
@@ -52,7 +54,7 @@ double fcTaylor(const double&);
 double heron(const double &, double &, double &, double &);
 
 
-//-------------------------------------------------- 3-Quadrature ---------------------------------------------------------//
+//-------------------------- 3-Quadrature ---------------------------------//
 
 // quadrature1.cpp
 double fExp(double);
@@ -81,28 +83,32 @@ double funcSinx(double); // funzione
 // multid_quadrature.cpp
 double func1(double, double);
 double funcCirc(double, double);
-double Gauss2D(double (*)(double, double), double, double, double, double, int, int);
-void ConvergenceGauss(double (*F)(double, double), double , double , double , double , int , double);
+double Gauss2D(double (*)(double, double), double, double, double,
+               double, int, int);
+void ConvergenceGauss(double (*F)(double, double), double , double , 
+               double , double , int , double);
 
 
-//-------------------------------------------------- 4-Random_numbers ---------------------------------------------------------//
+//------------------------ 4-Random_numbers -------------------------------//
 
 // gauss_distrib.cpp
 double gaussiana(const double&, const double&);
 
 
 
-//-------------------------------------------------- 5-Root_finders ---------------------------------------------------------//
+//------------------------- 5-Root_finders --------------------------------//
 
 // funzioni uguali per tutti i file del capitolo.
 // metodi di root finding
 int bisection(double (*F)(double), double, double, double, double&, int &);
 int false_position(double (*F)(double), double, double, double, double&, int &);
 int secant_method(double (*F)(double), double, double, double, double &, int &);
-int newton_method(double (*F)(double), double (*derF)(double), double, double, double, double, double &, int &);
+int newton_method(double (*F)(double), double (*derF)(double), double, double,
+                  double, double, double &, int &);
 
 // metodo di bracketing
-int Bracket(double (*F)(double), double a, double b, double n, double *xL, double *xR, int &nroots);
+int Bracket(double (*F)(double), double a, double b, double n, double *xL, 
+            double *xR, int &nroots);
 
 
 // froot.cpp
@@ -127,7 +133,7 @@ double derpolLegendre(double);
 double wi(double);
 
 
-//-------------------------------------------------- 6-Derivative ---------------------------------------------------------//
+//-------------------------- 6-Derivative ---------------------------------//
 
 // derivative.cpp
 double sinDer(double);
@@ -148,10 +154,14 @@ double SecondDerivative(double (*)(double), double, double, double, double);
 //-------------------------------------------------- 7-ODE ---------------------------------------------------------//
 
 // funzioni generiche
-void EulerStep(double, double *, void (*)(double, double *, double *), double, int);
-void RK2StepMid(double, double *, void (*)(double, double *, double *), double, int);
-void RK2StepHeun(double, double *, void (*)(double, double *, double *), double, int);
-void RK4Step(double, double *, void (*)(double, double *, double *), double, int);
+void EulerStep(double, double *, void (*)(double, double *, double *), 
+               double, int);
+void RK2StepMid(double, double *, void (*)(double, double *, double *), 
+                double, int);
+void RK2StepHeun(double, double *, void (*)(double, double *, double *), 
+                 double, int);
+void RK4Step(double, double *, void (*)(double, double *, double *), 
+             double, int);
 
 // ode1.cpp
 void RHSFuncOde1(double, double *,double *);

@@ -22,11 +22,15 @@
 using namespace std;
 
 double ode2Sol(double);
-void EulerStep(double, double *, void (*)(double, double *, double *), double, int);
+void EulerStep(double, double *, void (*)(double, double *, double *),
+               double, int);
 void RHSFuncOde2(double, double *,double *);
-void RK2StepMid(double, double *, void (*)(double, double *, double *), double, int);
-void RK2StepHeun(double, double *, void (*)(double, double *, double *), double, int);
-void RK4Step(double, double *, void (*)(double, double *, double *), double, int);
+void RK2StepMid(double, double *, void (*)(double, double *, double *),
+                double, int);
+void RK2StepHeun(double, double *, void (*)(double, double *, double *),
+                 double, int);
+void RK4Step(double, double *, void (*)(double, double *, double *),
+             double, int);
 
 int main(){
 
@@ -80,7 +84,8 @@ int main(){
 
     fdata1 << endl << endl; // separo i diversi metodi
 
-    // devo reinizializzare i valori iniziali della ODE e l'estremo di integrazione
+    // devo reinizializzare i valori iniziali della ODE e 
+    // l'estremo di integrazione
     t = tb;
     Y[0] = 1.0;
     Y[1] = 0.0;
@@ -100,7 +105,8 @@ int main(){
 
     fdata1 << endl << endl; // separo i diversi metodi
 
-    // devo reinizializzare i valori iniziali della ODE e l'estremo di integrazione
+    // devo reinizializzare i valori iniziali della ODE e l'estremo
+    // di integrazione
     t = tb;
     Y[0] = 1.0;
     Y[1] = 0.0;
@@ -120,7 +126,8 @@ int main(){
 
     fdata1 << endl << endl; // separo i diversi metodi
 
-    // devo reinizializzare i valori iniziali della ODE e l'estremo di integrazione
+    // devo reinizializzare i valori iniziali della ODE e l'estremo
+    // di integrazione
     t = tb;
     Y[0] = 1.0;
     Y[1] = 0.0;
@@ -141,7 +148,8 @@ int main(){
     fdata1.close();
 
 
-    // faccio lo studio della convergenza (rifaccio tutti i cicli visto che cambio dominio di integrazione e numero di punti)
+    // faccio lo studio della convergenza (rifaccio tutti i cicli
+    // visto che cambio dominio di integrazione e numero di punti)
     // uso la variabile tempo di prima
     // l'estremo di integrazione t_begin è lo stesso di sopra
     double te1 = 3; // l'estremo di integrazione
@@ -154,11 +162,13 @@ int main(){
     double SolEx; // soluzione esatta
     double errEul, errRK2M, errRK2H, errRK4; // errore
 
-    int npointC[10] = {4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048}; // numero di punti
+    // numero di punti
+    int npointC[10] = {4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048};
 
     for( int k = 0 ; k < 10 ; k ++ ){
 
-        // devo reinizializzare i valori iniziali della ODE e l'estremo di integrazione
+        // devo reinizializzare i valori iniziali della ODE e l'estremo di
+        // integrazione
         t = tb;
         Y1[0] = 1.0 , Y2[0] = 1.0 , Y3[0] = 1.0 , Y4[0] = 1.0;
         Y1[1] = 0.0 , Y2[1] = 0.0 , Y3[1] = 0.0 , Y4[1] = 0.0;
@@ -194,7 +204,8 @@ int main(){
         errRK4 = fabs( Y4[0] - SolEx );
 
             // stampo nel file
-            fdata2 << dtc << "  " << errEul << "  " << errRK2M << "  " << errRK2H << "   " << errRK4 << endl;
+            fdata2 << dtc << "  " << errEul << "  " << errRK2M
+                   << "  " << errRK2H << "   " << errRK4 << endl;
 
     }
 
@@ -211,15 +222,20 @@ double ode2Sol(double t){
 
 }
 
-// implemento il metodo di Eulero. Gli do in input la variabile di integrazione, un puntatore alle soluzioni, un puntatore al Right-Hand-Side-Function, lo step da utilizzare e la dimensionalità di Y, che non è altro che il numero di ODE di primo ordine che abbiamo.
-void EulerStep(double t, double *Y, void (*RHSFunc)(double, double *, double *), double dt, int neq){
+// implemento il metodo di Eulero. Gli do in input la variabile
+// di integrazione, un puntatore alle soluzioni, un puntatore al
+//Right-Hand-Side-Function, lo step da utilizzare e la dimensionalità
+// di Y, che non è altro che il numero di ODE di primo ordine che abbiamo.
+void EulerStep(double t, double *Y, void (*RHSFunc)(double, double *, double *),
+               double dt, int neq){
     
     // dt è lo step che utilizziamo per trovare la soluzione di dY/dt = rhs.
     // neq è il numero di ODE (dimensionalità di Y[])
     // *RHSFunc() punta al Right-Hand-Side-Function (in questo caso dYdt())
     
     int k; // variabile per visitare tutte le componenti di *Y
-    double rhs[256]; // per assicurarsi che rhs[] sia grande abbastanza (neq < 256)
+    double rhs[256]; // per assicurarsi che rhs[] sia grande
+                     // abbastanza (neq < 256)
 
     // calcolo il lato destro dell'equazione
     RHSFunc (t, Y, rhs);
@@ -232,7 +248,9 @@ void EulerStep(double t, double *Y, void (*RHSFunc)(double, double *, double *),
 
 }
 
-// definisco il Right-Hand-Side-Function (è problem dependent). Gli do in input t e il puntatore ad Y e in uscita (tramite il puntatore) mi faccio dare R
+// definisco il Right-Hand-Side-Function (è problem dependent). 
+// Gli do in input t e il puntatore ad Y e in uscita (tramite il puntatore)
+// mi faccio dare R
 void RHSFuncOde2(double t, double *Y, double *R){
 
     // Compute the right-hand side of the ODE (2 equation)
@@ -244,8 +262,11 @@ void RHSFuncOde2(double t, double *Y, double *R){
 }
 
 // implemento il metodo Runge-Kutta del secondo ordine (midpoint).
-// gli do in input la variabile di integrazione, il puntatore alle soluzioni, il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e l'ordine della ODE.
-void RK2StepMid(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R), double h, int neq){
+// gli do in input la variabile di integrazione, il puntatore alle soluzioni,
+// il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e
+// l'ordine della ODE.
+void RK2StepMid(double t, double *Y, void (*RHSFunc)(double t, double *Y, 
+                double *R), double h, int neq){
     
     // definisco i vettori per gli step intermedi
     double Y1[neq], k1[neq], k2[neq];
@@ -271,8 +292,11 @@ void RK2StepMid(double t, double *Y, void (*RHSFunc)(double t, double *Y, double
 }
 
 // implemento il metodo Runge-Kutta del secondo ordine (modified Eulero).
-// gli do in input la variabile di integrazione, il puntatore alle soluzioni, il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e l'ordine della ODE.
-void RK2StepHeun(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R), double h, int neq){
+// gli do in input la variabile di integrazione, il puntatore alle soluzioni,
+// il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e
+// l'ordine della ODE.
+void RK2StepHeun(double t, double *Y, void (*RHSFunc)(double t, double *Y,
+                 double *R), double h, int neq){
     
     // definisco i vettori per gli step intermedi
     double Y1[neq], k1[neq], k2[neq];
@@ -298,8 +322,11 @@ void RK2StepHeun(double t, double *Y, void (*RHSFunc)(double t, double *Y, doubl
 }
 
 // implemento il metodo Runge-Kutta del quarto ordine.
-// gli do in input la variabile di integrazione, il puntatore alle soluzioni, il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e l'ordine della ODE.
-void RK4Step(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R), double h, int neq){
+// gli do in input la variabile di integrazione, il puntatore alle soluzioni,
+// il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e
+// l'ordine della ODE.
+void RK4Step(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R),
+             double h, int neq){
     
     // definisco i vettori per gli step intermedi
     double Y1[neq], k1[neq], k2[neq], k3[neq], k4[neq];

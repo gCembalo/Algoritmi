@@ -2,11 +2,17 @@
 //
 // \dv[2]{x}{t} = -GM/r^2
 //
-// Use dimensionless units by setting GM=1 and set the initial mass at the point (x=4,y=0) with initial velocity in the y-direction. Use two dimensions (x-y) only.
+// Use dimensionless units by setting GM=1 and set the initial mass at the point
+// (x=4,y=0) with initial velocity in the y-direction.
+// Use two dimensions (x-y) only.
 //
 // What is the maximum velocity for which the orbit is closed ?
-// Consider first the case of a circular orbit and integrate for ≈10 orbits by counting turning points (1 orbit = 2 turning points). How can we safely choose the step size ?
-// Now consider an elliptical orbit (try e.g. α = 0.3). Can you devise a strategy to control the time step so that Dθ » const ? (Make sure your algorithm produces bounded orbits…)
+// Consider first the case of a circular orbit and integrate for ≈10 orbits
+// by counting turning points (1 orbit = 2 turning points). How can we
+// safely choose the step size ?
+// Now consider an elliptical orbit (try e.g. α = 0.3). 
+//Can you devise a strategy to control the time step so that Dθ » const ?
+// (Make sure your algorithm produces bounded orbits…)
 // How would you scale your results to physical c.g.s units ?
 //
 
@@ -46,7 +52,8 @@ int main(){
 
     double E0, E; // definisco le energie
     double dtheta = 0.1; // definisco il DeltaTheta costante
-    double vold; // definisco una variabile per salvarmi la velocità, in modo da fare in controllo sui turning point
+    double vold; // definisco una variabile per salvarmi la velocità, in modo da
+    // fare in controllo sui turning point
 
     // definisco e inizializzo le condizioni iniziali
     double x0 , y0 , vx0 , vy0;
@@ -54,11 +61,14 @@ int main(){
     y0 = 0.0;
     r = sqrt( x0*x0 + y0*y0 );
     vx0 = 0.0;
-    vy0 = sqrt( alpha / r ); // in generale possiamo scrivere v=sqrt(alpha / r) e se alpha < 2 abbiamo orbite ellittiche
+    vy0 = sqrt( alpha / r ); // in generale possiamo scrivere v=sqrt(alpha / r)
+    // e se alpha < 2 abbiamo orbite ellittiche
     v = sqrt( vx0*vx0 + vy0*vy0 );
-    E0 = v*v*0.5 - 1.0/r; // calcolo energia meccanica iniziale (se negativa allora le orbite sono chiuse)
+    E0 = v*v*0.5 - 1.0/r; // calcolo energia meccanica iniziale (se negativa 
+    // allora le orbite sono chiuse)
 
-    double Y[neq]; // definisco l'array delle soluzioni e imposto le condizioni iniziali
+    // definisco l'array delle soluzioni e imposto le condizioni iniziali
+    double Y[neq];
     Y[0] = x0;
     Y[1] = y0;
     Y[2] = vx0;
@@ -78,11 +88,14 @@ int main(){
     // risolvo le equazioni del moto usando RK a 4 step
     for( int i = 0 ; i < npoint ; i++ ){
 
-        // posso definire gli step temporali in base al punto dell'orbita in cui mi trovo
+        // posso definire gli step temporali in base al punto dell'orbita in 
+        // cui mi trovo
         dt = dtheta*r/v; // in cui abbiamo usato:
-        // v = ds/dt  =>  ds = v*dt  =>  ds = r*dtheta = v*dt  =>  dt = r*dtheta / v
+        // v = ds/dt  =>  ds = v*dt  =>  ds = r*dtheta = v*dt  =>  
+        // => dt = r*dtheta / v
 
-        // salvo la vecchia velocità per poter fare il controllo del turning point
+        // salvo la vecchia velocità per poter fare il controllo del 
+        // turning point
         vold = Y[3];
 
         RK4Step(t, Y, RHSFuncOde3, dt, neq); // risolvo la ODE
@@ -116,7 +129,8 @@ int main(){
     fdata.close();
 
     // mi faccio dire quanti turning point ci sono
-    cout << "\n Ci sono #" << count << " turning point in " << norbit << " orbite." << endl;
+    cout << "\n Ci sono #" << count << " turning point in " << norbit 
+         << " orbite." << endl;
     cout << "\n+----------------------------------------+\n" << endl;
 
     return 0;
@@ -124,7 +138,9 @@ int main(){
 }
 
 
-// definisco il Right-Hand-Side-Function (è problem dependent). Gli do in input t e il puntatore ad Y e in uscita (tramite il puntatore) mi faccio dare R
+// definisco il Right-Hand-Side-Function (è problem dependent). 
+// Gli do in input t e il puntatore ad Y e in uscita (tramite il puntatore) mi
+// faccio dare R
 void RHSFuncOde3(double t, double *Y, double *R){
 
     // setto le condizioni iniziali
@@ -143,8 +159,11 @@ void RHSFuncOde3(double t, double *Y, double *R){
 }
 
 // implemento il metodo Runge-Kutta del quarto ordine.
-// gli do in input la variabile di integrazione, il puntatore alle soluzioni, il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e l'ordine della ODE.
-void RK4Step(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R), double h, int neq){
+// gli do in input la variabile di integrazione, il puntatore alle soluzioni,
+// il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e
+// l'ordine della ODE.
+void RK4Step(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R),
+             double h, int neq){
     
     // definisco i vettori per gli step intermedi
     double Y1[neq], k1[neq], k2[neq], k3[neq], k4[neq];
@@ -178,7 +197,8 @@ void RK4Step(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R
 
     RHSFunc(t+h,Y1,k4); // calcolo k4 con il RSH con t_n+h e Y_n+k3*h
     
-    // scrivo il ciclo per calcolare Y_{n+1} = Y_n + h/6 * ( k1 + 2*k2 + 2*k3 + k4 )
+    // scrivo il ciclo per calcolare 
+    // Y_{n+1} = Y_n + h/6 * ( k1 + 2*k2 + 2*k3 + k4 )
     for (int i = 0 ; i < neq ; i++){
         
         Y[i] += h * ( k1[i] + 2.0*k2[i] + 2.0*k3[i] + k4[i] ) / 6.0;

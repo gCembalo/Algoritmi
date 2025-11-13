@@ -13,7 +13,9 @@ using namespace std;
 int g_LegendreN; // variabile che serve nel capitolo 5 per i polinomi di Legendre
 double alpha = 10.0; // definita da "trajectory.cpp" (cap. 06)
 
-// Dichiarazione delle funzioni in base alla lezione. Potrebbero esserci funzioni definite più volte, quindi è sempre meglio controllare, non solo il funzionamento, ma anche la sintassi con cui le si chiama
+// Dichiarazione delle funzioni in base alla lezione. Potrebbero esserci 
+// funzioni definite più volte, quindi è sempre meglio controllare, 
+// non solo il funzionamento, ma anche la sintassi con cui le si chiama
 
 
 //------------------------------Per Gnuplot---------------------------------//
@@ -31,7 +33,7 @@ double alpha = 10.0; // definita da "trajectory.cpp" (cap. 06)
 
 
 
-//-------------------------------------------------- 1-Introduzione ---------------------------------------------------------//
+//------------------------- 1-Introduzione --------------------------------//
 
 // ------------------ practice2.cpp ------------------- //
 
@@ -55,7 +57,7 @@ int Quotient(int a, int b, int& q, int& r){
 
 
 
-//-------------------------------------------------- 2-Precision ---------------------------------------------------------//
+//-------------------------- 2-Precision ---------------------------------//
 
 
 // ------------------ quadratic.cpp ------------------- //
@@ -76,7 +78,8 @@ void datiQuad(double& x, double& y, double& z){
 }
 
 // funzione con formula standard per eq. secondo grado
-void normQuad(const double& x, const double& y, const double& z, double& s1, double& s2){
+void normQuad(const double& x, const double& y, const double& z, double& s1,
+              double& s2){
 
     s1 = ( -y + sqrt(y*y - 4*x*z) )/(2*x);
     s2 = ( -y - sqrt(y*y - 4*x*z) )/(2*x);
@@ -87,7 +90,8 @@ void normQuad(const double& x, const double& y, const double& z, double& s1, dou
 }
 
 // funzione con formula alternativa per eq. secondo grado
-void altQuad(const double& x, const double& y, const double& z, double& s3, double& s4){
+void altQuad(const double& x, const double& y, const double& z, double& s3,
+             double& s4){
 
     s3 = -(2*z)/( y + sqrt(y*y - 4*x*z) );
     s4 = -(2*z)/( y - sqrt(y*y - 4*x*z) );
@@ -97,8 +101,10 @@ void altQuad(const double& x, const double& y, const double& z, double& s3, doub
 
 }
 
-// funzione che in base al segno del coefficiente b seleziona un metodo risolutivo piuttosto che l'altro
-void signbQuad(const double& x, const double& y, const double& z, double& s1, double& s2){
+// funzione che in base al segno del coefficiente b seleziona un metodo
+// risolutivo piuttosto che l'altro
+void signbQuad(const double& x, const double& y, const double& z, double& s1,
+               double& s2){
 
     if(y>=0){
 
@@ -113,7 +119,8 @@ void signbQuad(const double& x, const double& y, const double& z, double& s1, do
     }
 
     cout << "+--------------------------------------------------------+" << endl;
-    cout << "Si vede che a seconda del segno di b bisogna utilizzare una forma o l'altra. Le soluzioni sono:" << endl;
+    cout << "Si vede che a seconda del segno di b bisogna utilizzare una forma "
+         << "o l'altra. Le soluzioni sono:" << endl;
     cout << s1 << endl;
     cout << s2 << endl;
     cout << "+--------------------------------------------------------+" << endl;
@@ -150,7 +157,8 @@ void ordsolQuad(double& x1, double& x2){
 
 }
 
-// funzioni "norm" , "alt" e "singb" erano identiche a "quadratic.cpp" ma senza l'output
+// funzioni "norm" , "alt" e "singb" erano identiche a "quadratic.cpp" 
+// ma senza l'output
 
 
 
@@ -207,10 +215,12 @@ double fcTaylor(const double& x){
 
 
 // sviluppo il metodo di Herone per calcolare le radici quadrate
-// gli do in input il numero di cui fare la radice, la guess, l'errore per il controllo e il riferimento al risultato
+// gli do in input il numero di cui fare la radice, la guess, l'errore per 
+// il controllo e il riferimento al risultato
 double heron(const double &S, double &x, double &err, double &y){
 
-    // sviluppo la funzione mettendo come controllo l'errore (il cui limite è dato in input) sulla stima del metodo
+    // sviluppo la funzione mettendo come controllo l'errore (il cui limite è
+    // dato in input) sulla stima del metodo
     for( int i=0 ; i<100 ; i++ ){
 
         if(err > pow(10,-16)){
@@ -236,7 +246,7 @@ double heron(const double &S, double &x, double &err, double &y){
 
 
 
-//-------------------------------------------------- 3-Quadrature ---------------------------------------------------------//
+//-------------------------- 3-Quadrature ---------------------------------//
 
 
 // ------------------ quadrature1.cpp ------------------- //
@@ -249,7 +259,8 @@ double fExp(double x){
 }
 
 // Regola rettangolo
-// gli do in input la funzione, gli estremi di integrazione e il numero di intervalli
+// gli do in input la funzione, gli estremi di integrazione e il 
+// numero di intervalli
 double RectangularRule(double (*F)(double), double a, double b, int N){
 
     // Definisco l'ampiezza di ogni intervallo
@@ -270,7 +281,8 @@ double RectangularRule(double (*F)(double), double a, double b, int N){
 }
 
 // Regola rettangolo ma con punto medio
-// gli do in input la funzione, gli estremi di integrazione e il numero di intervalli
+// gli do in input la funzione, gli estremi di integrazione e il 
+// numero di intervalli
 double MidPointRule(double (*F)(double), double a, double b, int N){
 
     // Definisco l'ampiezza di ogni intervallo
@@ -290,7 +302,8 @@ double MidPointRule(double (*F)(double), double a, double b, int N){
 }
 
 // Regola trapezio
-// gli do in input la funzione, gli estremi di integrazione e il numero di intervalli
+// gli do in input la funzione, gli estremi di integrazione e il 
+// numero di intervalli
 double TrapezoidalRule(double (*F)(double), double a, double b, int N){
 
     // Definisco l'ampiezza di ogni intervallo
@@ -310,7 +323,8 @@ double TrapezoidalRule(double (*F)(double), double a, double b, int N){
 }
 
 // Regola Simpson estesa
-// gli do in input la funzione, gli estremi di integrazione e il numero di intervalli
+// gli do in input la funzione, gli estremi di integrazione e il
+// numero di intervalli
 double ExtSimpsonRule(double (*F)(double), double a, double b, int N){
 
     int w = 4; // Definizione del peso
@@ -339,15 +353,17 @@ double ConvergenceRectangular(double (*F)(double), double a, double b, double to
     // Controllo quanti intervalli servono
     int i = 2;
 
-    // faccio il controllo (dimezzando l'intervallo) finché il risultato ottenuto non migliora meno della tolleranza
-    while( fabs( RectangularRule(F, a, b, i) - RectangularRule(F, a, b, i/2) ) > tol ){
+    // faccio il controllo (dimezzando l'intervallo) finché il risultato 
+    // ottenuto non migliora meno della tolleranza
+    while(fabs( RectangularRule(F,a,b,i) - RectangularRule(F,a,b,i*0.5) ) > tol){
 
         i = 2*i;
 
     }
 
-    // stampo a terminale il risultato della regola insieme al numero delle iterazioni
-    cout << "Rectangular: " << RectangularRule(F, a, b, i) << " iter: " << i << endl;
+    // stampo a terminale il risultato della regola insieme al numero 
+    // delle iterazioni
+    cout << "Rectangular: " << RectangularRule(F,a,b,i) << " iter: " << i << endl;
 
     return 0.;
 
@@ -360,14 +376,16 @@ double ConvergenceMidPoint(double (*F)(double), double a, double b, double tol){
     // Controllo quanti intervalli servono
     int i = 2;
 
-    // faccio il controllo (dimezzando l'intervallo) finché il risultato ottenuto non migliora meno della tolleranza
-    while ( fabs( MidPointRule(F, a, b, i) - MidPointRule(F, a, b, i/2) ) > tol ){
+    // faccio il controllo (dimezzando l'intervallo) finché il risultato
+    // ottenuto non migliora meno della tolleranza
+    while ( fabs( MidPointRule(F,a,b,i) - MidPointRule(F,a,b,i*0.5) ) > tol ){
 
         i = 2*i;
 
     }
 
-    // stampo a terminale il risultato della regola insieme al numero delle iterazioni
+    // stampo a terminale il risultato della regola insieme al numero 
+    // delle iterazioni
     cout << "Mid Point: " << MidPointRule(F, a, b, i) << " iter: " << i << endl;
 
     return 0.;
@@ -381,15 +399,18 @@ double ConvergenceTrapezoidal(double (*F)(double), double a, double b, double to
     // Controllo quanti intervalli servono
     int i = 2;
 
-    // faccio il controllo (dimezzando l'intervallo) finché il risultato ottenuto non migliora meno della tolleranza
-    while ( fabs( TrapezoidalRule(F, a, b, i) - TrapezoidalRule(F, a, b, i/2) ) > tol ){
+    // faccio il controllo (dimezzando l'intervallo) finché il risultato ottenuto
+    // non migliora meno della tolleranza
+    while(fabs( TrapezoidalRule(F,a,b,i) - TrapezoidalRule(F,a,b,i*0.5) ) > tol){
 
         i = 2*i;
 
     }
 
-    // stampo a terminale il risultato della regola insieme al numero delle iterazioni
-    cout << "Trapezoidal: " << TrapezoidalRule(F, a, b, i) << " iter: " << i << endl;
+    // stampo a terminale il risultato della regola insieme al numero 
+    // delle iterazioni
+    cout << "Trapezoidal: " << TrapezoidalRule(F, a, b, i) 
+         << " iter: " << i << endl;
 
     return 0.;
 
@@ -402,14 +423,16 @@ double ConvergenceSimpson(double (*F)(double), double a, double b, double tol){
     // Controllo quanti intervalli servono
     int i = 2;
 
-    // faccio il controllo (dimezzando l'intervallo) finché il risultato ottenuto non migliora meno della tolleranza
-    while ( fabs( ExtSimpsonRule(F, a, b, i) - ExtSimpsonRule(F, a, b, i/2) ) > tol ){
+    // faccio il controllo (dimezzando l'intervallo) finché il risultato 
+    // ottenuto non migliora meno della tolleranza
+    while(fabs( ExtSimpsonRule(F,a,b,i) - ExtSimpsonRule(F,a,b,i*0.5) ) > tol){
 
         i = 2*i;
 
     }
 
-    // stampo a terminale il risultato della regola insieme al numero delle iterazioni
+    // stampo a terminale il risultato della regola insieme al numero 
+    // delle iterazioni
     cout << "Simpson: " << ExtSimpsonRule(F, a, b, i) << " iter: " << i << endl;
 
     return 0.;
@@ -438,8 +461,11 @@ double func2(double x){
 
 
 
-// implemento il metodo di Gauss in cui inserisco degli if per selezionare il grado del polinomio di Legendre voluto. Puoi vedere il capitolo 5 in cui calcoliamo zeri e pesi dei polinomi di Legendre di qualsiasi ordine.
-// gli do in input la funzione, gli estremi di integrazione, il numero di intervalli e il numero di punti
+// implemento il metodo di Gauss in cui inserisco degli if per selezionare il 
+// grado del polinomio di Legendre voluto. Puoi vedere il capitolo 5 in cui 
+// calcoliamo zeri e pesi dei polinomi di Legendre di qualsiasi ordine.
+// gli do in input la funzione, gli estremi di integrazione, il numero di 
+// intervalli e il numero di punti
 double Gauss(double (*F)(double), double a, double b, int N, int ng){
 
     // Implemento la funzione per funzionare fino a 5 punti
@@ -496,17 +522,19 @@ double Gauss(double (*F)(double), double a, double b, int N, int ng){
         return 0.;
     }
 
-    // Calcolo l'integrale. Definisco l'ampiezza dell'intervallo e una somma ausiliaria per trovare l'integrale di Gauss
+    // Calcolo l'integrale. Definisco l'ampiezza dell'intervallo e una somma
+    // ausiliaria per trovare l'integrale di Gauss
     double h = fabs(b-a)/(double)N;
     double sumj = 0.0;
 
     for( int i=0 ; i<N ; i++ ){
 
-            // Devo fare il cambio di variabili che poi viene iterato sui vari intervalli successivi
+            // Devo fare il cambio di variabili che poi viene iterato sui
+            // vari intervalli successivi
             double x0 = a + i*h;
             double x1 = x0 + h;
-            double s1 = (x1-x0)/2;
-            double s2 = (x1+x0)/2;
+            double s1 = (x1-x0)*0.5;
+            double s2 = (x1+x0)*0.5;
 
             // azzero il conteggio di sumj
             sumj = 0.0;
@@ -543,7 +571,8 @@ double funcSinx(double x){
     return sin(x)/x;
 }
 
-// funzioni Trapezoidal, ExtSimpson, Gauss identiche a quelle già fatte in "quadrature.cpp" e "quadrature2.cpp".
+// funzioni Trapezoidal, ExtSimpson, Gauss identiche a quelle già fatte
+// in "quadrature.cpp" e "quadrature2.cpp".
 
 
 
@@ -571,8 +600,10 @@ double funcCirc(double x, double y){
 
 }
 
-// gli do in input la funzione (con due variabili), gli estremi di integrazione, sia in x che in y, il numero di intervalli e di punti gaussiani
-double Gauss2D(double (*F)(double, double), double x0, double x1, double y0, double y1, int n, int ng){
+// gli do in input la funzione (con due variabili), gli estremi di integrazione,
+// sia in x che in y, il numero di intervalli e di punti gaussiani
+double Gauss2D(double (*F)(double, double), double x0, double x1, double y0, 
+               double y1, int n, int ng){
 
     // Implemento la funzione per funzionare fino a 5 punti
 
@@ -644,22 +675,22 @@ double Gauss2D(double (*F)(double, double), double x0, double x1, double y0, dou
         // Definisco gli estremi dell'intervallo
         a = x0 + i*dx;
         b = a + dx;
-        s1 = (b - a)/2;
-        s2 = (b + a)/2;
+        s1 = (b - a)*0.5;
+        s2 = (b + a)*0.5;
 
         for( int j = 0 ; j < n ; j++ ){   // Ciclo per le y
             
             // Definisco gli estremi dell'intervallo
             c = y0 + j*dy;
             d = c + dy;
-            s3 = (d - c)/2;
-            s4 = (d + c)/2;
+            s3 = (d - c)*0.5;
+            s4 = (d + c)*0.5;
 
             for( int ik = 0 ; ik < ng ; ik ++ ){   // Ciclo per variare x
 
                 for( int jk = 0 ; jk < ng ; jk ++){   // Ciclo per variare y
 
-                    sum += w[ik] * s1 * s3 * w[jk] * F( s1*x[ik] + s2 , s3*x[jk] + s4 );
+                    sum += w[ik]*s1*s3*w[jk]*F( s1*x[ik] + s2 , s3*x[jk] + s4 );
 
                 }
 
@@ -675,26 +706,29 @@ double Gauss2D(double (*F)(double, double), double x0, double x1, double y0, dou
 
 // Funzione di convergenza per il metodo di Simpson
 // gli do in input la funzione, gli estremi di integrazione e la tolleranza
-void ConvergenceGauss(double (*F)(double, double), double x0, double x1, double y0, double y1, int ng, double tol){
+void ConvergenceGauss(double (*F)(double, double), double x0, double x1, 
+                      double y0, double y1, int ng, double tol){
 
     // Controllo quanti intervalli servono
     int i = 1;
 
-    // faccio il controllo (incrementando l'intervallo) finché il risultato ottenuto non migliora meno della tolleranza
-    while ( fabs( Gauss2D(F, x0, x1, y0, y1, i, ng) - 3.1415926535897932384626433 ) > tol ){
+    // faccio il controllo (incrementando l'intervallo) finché il risultato
+    // ottenuto non migliora meno della tolleranza
+    while ( fabs( Gauss2D(F, x0, x1, y0, y1, i, ng) - 3.1415926535897 ) > tol ){
 
         i ++ ;
 
     }
 
-    cout << "Gauss = " << Gauss2D(F, x0, x1, y0, y1, i, ng) << "\ncon " << i << " intervalli." << endl;
+    cout << "Gauss = " << Gauss2D(F, x0, x1, y0, y1, i, ng) 
+         << "\ncon " << i << " intervalli." << endl;
 
 }
 
 
 
 
-//-------------------------------------------------- 4-Random ---------------------------------------------------------//
+//---------------------------- 4-Random -----------------------------------//
 
 // ------------------ guess.cpp ------------------- //
 // no function...
@@ -718,14 +752,16 @@ double gaussiana(const double &x, const double &sigma){
 
 
 
-//-------------------------------------------------- 5-Root_finders ---------------------------------------------------------//
+//------------------------- 5-Root_finders --------------------------------//
 
 
 // ------------ root finders function ------------- //
 
 // metodo della bisezione
-// gli do in input la funzione, gli estremi a e b, la tolleranza su x, uno zero per riferimento e il numero di iterazioni
-int bisection(double (*F)(double), double a, double b, double tol, double &zero, int &l){
+// gli do in input la funzione, gli estremi a e b, la tolleranza su x, 
+// uno zero per riferimento e il numero di iterazioni
+int bisection(double (*F)(double), double a, double b, double tol, 
+              double &zero, int &l){
 
     double x; // la mia guess dello zero che aggiorno ad ogni iterazione
     int n = 0; // la variabile che mi permette di contare le iterazioni
@@ -741,7 +777,8 @@ int bisection(double (*F)(double), double a, double b, double tol, double &zero,
         zero = a;
 
         // creo l'output delle iterazioni
-        cout << "(Bisection) # = " << n << "    (l'estremo " << a << " è già lo zero)"<< endl;
+        cout << "(Bisection) # = " << n 
+             << "    (l'estremo " << a << " è già lo zero)"<< endl;
 
         l = n;
         return 0;
@@ -752,7 +789,8 @@ int bisection(double (*F)(double), double a, double b, double tol, double &zero,
         zero = b;
 
         // creo l'output delle iterazioni
-        cout << "(Bisection) # = " << n << "(l'estremo " << b << " è già lo zero)"<< endl;
+        cout << "(Bisection) # = " << n 
+             << "(l'estremo " << b << " è già lo zero)"<< endl;
 
         l = n;
         return 0;
@@ -775,7 +813,7 @@ int bisection(double (*F)(double), double a, double b, double tol, double &zero,
             }
 
             // calcolo la prima stima dello zero
-            x = ( a+b ) / 2;
+            x = ( a+b ) * 0.5;
 
             // definisco le variabili delle funzioni valutate
             fa = F(a);
@@ -807,7 +845,9 @@ int bisection(double (*F)(double), double a, double b, double tol, double &zero,
             }
 
             // creo l'output voluto (esercizio froot.cpp)
-            //cout << "n = " << n << ";   [a,b] = [" << a << ", " << b << "];    xm = " << x << ";   Deltax = " << fabs(a-b) << ";   f(xm) = " << F(x) << endl;
+            //cout << "n = " << n << ";   [a,b] = [" << a << ", " << b 
+            //       << "];    xm = " << x << ";   Deltax = " << fabs(a-b) 
+            //       << ";   f(xm) = " << F(x) << endl;
 
         }
 
@@ -823,8 +863,10 @@ int bisection(double (*F)(double), double a, double b, double tol, double &zero,
 }
 
 // metodo della false position
-// gli do in input la funzione, gli estremi a e b, la tolleranza su x, uno zero per riferimento e il numero di iterazioni
-int false_position(double (*F)(double), double a, double b, double tol, double &zero, int &l){
+// gli do in input la funzione, gli estremi a e b, la tolleranza su x, 
+// uno zero per riferimento e il numero di iterazioni
+int false_position(double (*F)(double), double a, double b, double tol, 
+                   double &zero, int &l){
 
     double x = 3; // la guess di zero della funzione
     double xk = 0; // variabile che mi serve per la tolleranza
@@ -842,7 +884,8 @@ int false_position(double (*F)(double), double a, double b, double tol, double &
         zero = a;
 
         // creo l'output delle iterazioni
-        cout << "(False position) # = " << n << "    (l'estremo " << a << " è già lo zero)"<< endl;
+        cout << "(False position) # = " << n 
+             << "    (l'estremo " << a << " è già lo zero)"<< endl;
 
         l = n;
         return 0;
@@ -853,14 +896,16 @@ int false_position(double (*F)(double), double a, double b, double tol, double &
         zero = b;
 
         // creo l'output delle iterazioni
-        cout << "(False position) # = " << n << "(l'estremo " << b << " è già lo zero)"<< endl;
+        cout << "(False position) # = " << n 
+             << "(l'estremo " << b << " è già lo zero)"<< endl;
         
         l = n;
         return 0;
 
     }
     else{
-        // metto nel ciclo la condizione sia sulla tolleranza che sul numero di cicli (inserita dopo)
+        // metto nel ciclo la condizione sia sulla tolleranza che sul 
+        // numero di cicli (inserita dopo)
         while( fabs( x - xk ) > tol ){
         
             n++;
@@ -899,7 +944,9 @@ int false_position(double (*F)(double), double a, double b, double tol, double &
             }
 
             // creo l'output voluto (esercizio froot.cpp)
-            //cout << "n = " << n << ";   [a,b] = [" << a << ", " << b << "];    xm = " << x << ";   Deltax = " << fabs(a-b) << ";   f(xm) = " << F(x) << endl;
+            //cout << "n = " << n << ";   [a,b] = [" << a << ", " << b 
+            //       << "];    xm = " << x << ";   Deltax = " << fabs(a-b) 
+            //       << ";   f(xm) = " << F(x) << endl;
 
         }
 
@@ -914,13 +961,19 @@ int false_position(double (*F)(double), double a, double b, double tol, double &
 }
 
 // metodo della secante
-// gli do in input la funzione, gli estremi a e b, la tolleranza su x, uno zero per riferimento e il numero di iterazioni
-int secant_method(double (*F)(double), double a, double b, double tol, double &zero, int &l){
+// gli do in input la funzione, gli estremi a e b, la tolleranza su x, 
+// uno zero per riferimento e il numero di iterazioni
+int secant_method(double (*F)(double), double a, double b, double tol, 
+                  double &zero, int &l){
 
-    // definisco le variabili che mi servono per tenere traccia delle varie iterazioni di x
-    double xk1 = a, xk = b, xk2 = xk + 1; // dove uso xk come x_k, xk1 come x_{k-1} e xk2 come x_{k+1} ; inizializzo gli zeri sugli estremi dell'intervallo in cui ricaviamo la retta
+    // definisco le variabili che mi servono per tenere traccia delle
+    // varie iterazioni di x
+    double xk1 = a, xk = b, xk2 = xk + 1; // dove uso xk come x_k, xk1 come
+    // x_{k-1} e xk2 come x_{k+1} ; inizializzo gli zeri sugli estremi 
+    // dell'intervallo in cui ricaviamo la retta
     int n = 0; // variabile per contare
-    double xp = 0; // una variabile di controllo per vedere di quanto miglioriamo la guess
+    // una variabile di controllo per vedere di quanto miglioriamo la guess
+    double xp = 0;
 
     // definisco le variabili della funzione valutata
     double fa = F(a);
@@ -934,7 +987,8 @@ int secant_method(double (*F)(double), double a, double b, double tol, double &z
         zero = a;
 
         // creo l'output delle iterazioni
-        cout << "(Secant) # = " << n << "    (l'estremo " << a << " è già lo zero)" << endl;
+        cout << "(Secant) # = " << n 
+             << "    (l'estremo " << a << " è già lo zero)" << endl;
 
         l = n; // sono le iterazioni
         return 0;
@@ -945,7 +999,8 @@ int secant_method(double (*F)(double), double a, double b, double tol, double &z
         zero = b;
 
         // creo l'output delle iterazioni
-        cout << "(Secant) # = " << n << "(l'estremo " << b << " è già lo zero)"<< endl;
+        cout << "(Secant) # = " << n 
+             << "(l'estremo " << b << " è già lo zero)" << endl;
 
         l = n; // sono le iterazioni
         return 0;
@@ -953,7 +1008,8 @@ int secant_method(double (*F)(double), double a, double b, double tol, double &z
     }
     else{
         
-        // metto nel ciclo la condizione sia sulla tolleranza che sul numero di cicli (messo dopo)
+        // metto nel ciclo la condizione sia sulla tolleranza che sul numero 
+        // di cicli (messo dopo)
         while( fabs( xk2 - xp ) > tol ){
 
             n++;
@@ -978,7 +1034,9 @@ int secant_method(double (*F)(double), double a, double b, double tol, double &z
             xk = xk2;
 
             // creo l'output voluto (esercizio froot.cpp)
-            //cout << "n = " << n << ";   [a,b] = [" << xk1 << ", " << xk << "];    x0 = " << xk2 << ";   Deltax = " << fabs(xk2-xk1) << ";   f(x0) = " << F(xk2) << endl;
+            //cout << "n = " << n << ";   [a,b] = [" << xk1 << ", " << xk 
+            //       << "];    x0 = " << xk2 << ";   Deltax = " << fabs(xk2-xk1) 
+            //       << ";   f(x0) = " << F(xk2) << endl;
 
         }
 
@@ -994,8 +1052,10 @@ int secant_method(double (*F)(double), double a, double b, double tol, double &z
 }
 
 // metodo di Newton
-// gli do in input la funzione, la derivata, gli estremi a e b, la tolleranza su x, la tolleranza su y, uno zero per riferimento e il numero di iterazioni
-int newton_method(double (*F)(double), double (*derF)(double), double a, double b, double xtol, double ytol, double &zero, int &l){
+// gli do in input la funzione, la derivata, gli estremi a e b, la tolleranza
+// su x, la tolleranza su y, uno zero per riferimento e il numero di iterazioni
+int newton_method(double (*F)(double), double (*derF)(double), double a, 
+                  double b, double xtol, double ytol, double &zero, int &l){
 
     int n = 0; // variabile per contare
 
@@ -1007,7 +1067,8 @@ int newton_method(double (*F)(double), double (*derF)(double), double a, double 
         zero = a;
 
         // creo l'output delle iterazioni
-        cout << "(Newton) # = " << n << "    (l'estremo " << a << " è già lo zero)"<< endl;
+        cout << "(Newton) # = " << n 
+             << "    (l'estremo " << a << " è già lo zero)" << endl;
 
         return 0;
 
@@ -1017,7 +1078,8 @@ int newton_method(double (*F)(double), double (*derF)(double), double a, double 
         
         zero = b;
         // creo l'output delle iterazioni
-        cout << "(Newton) # = " << n << "    (l'estremo " << b << " è già lo zero)"<< endl;
+        cout << "(Newton) # = " << n 
+             << "    (l'estremo " << b << " è già lo zero)" << endl;
 
         return 0;
 
@@ -1026,10 +1088,12 @@ int newton_method(double (*F)(double), double (*derF)(double), double a, double 
     // definisco delle variabili utili all'algoritmo
     double Deltax = fabs( b-a ); // l'ampiezza dell'intervallo inziale
     double deltax = Deltax * 0.5; // la nuova ampiezza (inizializzata)
-    double x = ( a + b )*0.5; // la mia prima guess, che prendo a metà dell'intervallo
+    // la mia prima guess, che prendo a metà dell'intervallo
+    double x = ( a + b )*0.5;
     double fx = F(x); // funzione valutata nella guess
 
-    // faccio il ciclo per il metodo di Newton, con i controlli su x, su y e sul numero di iterazioni (nel mezzo del while)
+    // faccio il ciclo per il metodo di Newton, con i controlli su x, su y e 
+    // sul numero di iterazioni (nel mezzo del while)
     while( fabs(deltax) > xtol && fabs(fx) > ytol ){
 
         n++;
@@ -1043,7 +1107,9 @@ int newton_method(double (*F)(double), double (*derF)(double), double a, double 
 
         }
 
-        // metto un controllo sugli intervalli, che mi blocca il ciclo se la nuova ampiezza deltax è maggiore di quella precedente. Mi blocca se cominciamo a non convergere
+        // metto un controllo sugli intervalli, che mi blocca il ciclo se la 
+        // nuova ampiezza deltax è maggiore di quella precedente. Mi blocca se 
+        // cominciamo a non convergere
         if( fabs(deltax) > fabs(Deltax) ){
 
             zero = x;
@@ -1094,8 +1160,11 @@ int newton_method(double (*F)(double), double (*derF)(double), double a, double 
 }
 
 // bracketing function
-// gli do in input la funzione, gli estremi a e b, il numero di intervalli, un array per gli estremi (sinistro e destro) degli intervalli, e un riferimento al numero di zeri
-int Bracket(double (*F)(double), double a, double b, double n, double *xL, double *xR, int &nroots){
+// gli do in input la funzione, gli estremi a e b, il numero di intervalli, 
+// un array per gli estremi (sinistro e destro) degli intervalli, e un 
+// riferimento al numero di zeri
+int Bracket(double (*F)(double), double a, double b, double n, double *xL, 
+            double *xR, int &nroots){
 
     // definisco le variabili che uso per contare
     int count = 0, i; // count mi dice quanti zeri ho
@@ -1111,7 +1180,8 @@ int Bracket(double (*F)(double), double a, double b, double n, double *xL, doubl
         aL = a + i*dx;
         aR = a + (i+1)*dx;
 
-        // metto la condizione in cui abbiamo un cambiamento di segno e quindi con la quale ci ricordiamo il valore
+        // metto la condizione in cui abbiamo un cambiamento di segno e quindi
+        // con la quale ci ricordiamo il valore
         fR = F(aR);
         if( fL*fR <= 0.0 ){
 
@@ -1194,13 +1264,13 @@ double derpol(double x){
 
 double funcSes4(double x){
 
-    return exp( 1/( x + 0.5 ) ) - ( 3 + 2*x )/( 1 + x );
+    return exp( 1./( x + 0.5 ) ) - ( 3 + 2*x )/( 1 + x );
 
 }
 
 double derfuncSes4(double x){
 
-    return - 1 / ((x + 0.5)*(x+0.5)) * exp( 1 / (x + 0.5)) + 1 / ((1+x) * (1+x));
+    return -1./((x + 0.5)*(x+0.5)) * exp( 1./(x + 0.5)) + 1./((1+x) * (1+x));
 
 }
 
@@ -1290,7 +1360,7 @@ double wi(double x){
 
 
 
-//-------------------------------------------------- 6-Derivative ---------------------------------------------------------//
+//-------------------------- 6-Derivative ---------------------------------//
 
 // ------------------ derivative.cpp ------------------- //
 
@@ -1337,7 +1407,8 @@ double derCD(double (*F)(double), double xm, double xp, double h){
 }
 
 // x_i è x_{i} ; xp è x_{i+1} ; xm è x_{i-1} ; xmm è x_{i-2} ; xpp è x_{i+2}
-double der4th(double (*F)(double), double xmm, double xm, double xp, double xpp, double h){
+double der4th(double (*F)(double), double xmm, double xm, double xp, double xpp,
+              double h){
 
     // definisco 
     double fiPrime = ( F(xmm) - 8.0*F(xm) + 8.0*F(xp) - F(xpp) )/( 12.0*h );
@@ -1362,7 +1433,8 @@ double position(double t){
 
 }
 
-// definisco la velocità che mi serve solo per la derivata seconda in 0 avendo il problema di due limiti diversi
+// definisco la velocità che mi serve solo per la derivata seconda in 0 avendo
+// il problema di due limiti diversi
 double velocity(double t){
 
     // elimino la singolarità
@@ -1370,13 +1442,15 @@ double velocity(double t){
         return 0.;
     }
     else{
-        return 2*alpha*t - 3*t*t*( 1 - exp( -alpha*alpha/t ) ) + ( alpha*alpha*t )*exp( -alpha*alpha/t ) ;
+        return 2*alpha*t - 3*t*t*( 1 - exp( -alpha*alpha/t ) ) + 
+               ( alpha*alpha*t )*exp( -alpha*alpha/t ) ;
     }
 
 }
 
 // x_i è x_{i} ; xp è x_{i+1} ; xm è x_{i-1} ; xmm è x_{i-2} ; xpp è x_{i+2}
-double SecondDerivative(double (*F)(double x), double xi, double xm, double xp, double h){
+double SecondDerivative(double (*F)(double x), double xi, double xm, double xp, 
+                        double h){
 
     // definisco
     double fprimeprime = ( F(xp) - 2.0*F(xi) + F(xm) )/( h*h );
@@ -1387,20 +1461,25 @@ double SecondDerivative(double (*F)(double x), double xi, double xm, double xp, 
 
 
 
-//-------------------------------------------------- 7-ODE ---------------------------------------------------------//
+//------------------------------ 7-ODE -------------------------------------//
 
 
 // programmi utilizzati per tutte le esercitazioni
 
-// implemento il metodo di Eulero. Gli do in input la variabile di integrazione, un puntatore alle soluzioni, un puntatore al Right-Hand-Side-Function, lo step da utilizzare e la dimensionalità di Y, che non è altro che il numero di ODE di primo ordine che abbiamo.
-void EulerStep(double t, double *Y, void (*RHSFunc)(double, double *, double *), double dt, int neq){
+// implemento il metodo di Eulero. Gli do in input la variabile di integrazione,
+// un puntatore alle soluzioni, un puntatore al Right-Hand-Side-Function, 
+// lo step da utilizzare e la dimensionalità di Y, che non è altro che il numero
+// di ODE di primo ordine che abbiamo.
+void EulerStep(double t, double *Y, void (*RHSFunc)(double, double *, double *),
+               double dt, int neq){
     
     // dt è lo step che utilizziamo per trovare la soluzione di dY/dt = rhs.
     // neq è il numero di ODE (dimensionalità di Y[])
     // *RHSFunc() punta al Right-Hand-Side-Function (in questo caso dYdt())
     
     int k; // variabile per visitare tutte le componenti di *Y
-    double rhs[256]; // per assicurarsi che rhs[] sia grande abbastanza (neq < 256)
+    double rhs[256]; // per assicurarsi che rhs[] sia grande 
+                     // abbastanza (neq < 256)
 
     // calcolo il lato destro dell'equazione
     RHSFunc (t, Y, rhs);
@@ -1414,8 +1493,11 @@ void EulerStep(double t, double *Y, void (*RHSFunc)(double, double *, double *),
 }
 
 // implemento il metodo Runge-Kutta del secondo ordine (midpoint).
-// gli do in input la variabile di integrazione, il puntatore alle soluzioni, il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e l'ordine della ODE.
-void RK2StepMid(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R), double h, int neq){
+// gli do in input la variabile di integrazione, il puntatore alle soluzioni, 
+// il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e 
+// l'ordine della ODE.
+void RK2StepMid(double t, double *Y, void (*RHSFunc)(double t, double *Y, 
+                double *R), double h, int neq){
     
     // definisco i vettori per gli step intermedi
     double Y1[neq], k1[neq], k2[neq];
@@ -1441,8 +1523,11 @@ void RK2StepMid(double t, double *Y, void (*RHSFunc)(double t, double *Y, double
 }
 
 // implemento il metodo Runge-Kutta del secondo ordine (modified Eulero).
-// gli do in input la variabile di integrazione, il puntatore alle soluzioni, il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e l'ordine della ODE.
-void RK2StepHeun(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R), double h, int neq){
+// gli do in input la variabile di integrazione, il puntatore alle soluzioni, 
+// il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e 
+// l'ordine della ODE.
+void RK2StepHeun(double t, double *Y, void (*RHSFunc)(double t, double *Y, 
+                 double *R), double h, int neq){
     
     // definisco i vettori per gli step intermedi
     double Y1[neq], k1[neq], k2[neq];
@@ -1468,8 +1553,11 @@ void RK2StepHeun(double t, double *Y, void (*RHSFunc)(double t, double *Y, doubl
 }
 
 // implemento il metodo Runge-Kutta del quarto ordine.
-// gli do in input la variabile di integrazione, il puntatore alle soluzioni, il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e l'ordine della ODE.
-void RK4Step(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R), double h, int neq){
+// gli do in input la variabile di integrazione, il puntatore alle soluzioni,
+// il puntatore alla funzione del Right-Hand-Side-Function, l'incremento e
+// l'ordine della ODE.
+void RK4Step(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R),
+             double h, int neq){
     
     // definisco i vettori per gli step intermedi
     double Y1[neq], k1[neq], k2[neq], k3[neq], k4[neq];
@@ -1503,7 +1591,8 @@ void RK4Step(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R
 
     RHSFunc(t+h,Y1,k4); // calcolo k4 con il RSH con t_n+h e Y_n+k3*h
     
-    // scrivo il ciclo per calcolare Y_{n+1} = Y_n + h/6 * ( k1 + 2*k2 + 2*k3 + k4 )
+    // scrivo il ciclo per calcolare 
+    // Y_{n+1} = Y_n + h/6 * ( k1 + 2*k2 + 2*k3 + k4 )
     for (int i = 0 ; i < neq ; i++){
         
         Y[i] += h * ( k1[i] + 2.0*k2[i] + 2.0*k3[i] + k4[i] ) / 6.0;
@@ -1538,7 +1627,9 @@ double ode2Sol(double t){
     return cos(t);
 
 }
-// definisco il Right-Hand-Side-Function (è problem dependent). Gli do in input t e il puntatore ad Y e in uscita (tramite il puntatore) mi faccio dare R
+// definisco il Right-Hand-Side-Function (è problem dependent). 
+// Gli do in input t e il puntatore ad Y e in uscita (tramite il puntatore) 
+// mi faccio dare R
 void RHSFuncOde2(double t, double *Y, double *R){
 
     // Compute the right-hand side of the ODE (2 equation)
@@ -1551,7 +1642,9 @@ void RHSFuncOde2(double t, double *Y, double *R){
 
 // ------------------ kepler.cpp ------------------- //
 
-// definisco il Right-Hand-Side-Function (è problem dependent). Gli do in input t e il puntatore ad Y e in uscita (tramite il puntatore) mi faccio dare R
+// definisco il Right-Hand-Side-Function (è problem dependent). 
+// Gli do in input t e il puntatore ad Y e in uscita (tramite il puntatore) mi 
+// faccio dare R
 void RHSFuncOde3(double t, double *Y, double *R){
 
     // setto le condizioni iniziali
