@@ -90,11 +90,10 @@ int main(){
 
         // posso definire gli step temporali in base al punto dell'orbita in 
         // cui mi trovo
-        //dt = dtheta*r/v; // in cui abbiamo usato:
+        dt = dtheta*r/v; // in cui abbiamo usato:
         // v = ds/dt  =>  ds = v*dt  =>  ds = r*dtheta = v*dt  =>  
         // => dt = r*dtheta / v
 
-        dt = 0.6;
         // salvo la vecchia velocità per poter fare il controllo del 
         // turning point
         vold = Y[3];
