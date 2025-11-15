@@ -10,9 +10,12 @@ using namespace std;
 // includo l'header
 #include "function_alg.h"
 
+// definisco le macro
 #define NMAX_EQ 64 // numero massimo di eq (lo inseriamo per sicurezza e per non
 // lasciare array con dimensione variabile)
+#define OMEGA 1.0 // pulsazione del problema (vedi harmonic.cpp Ch07)
 
+// definizione di variabili globali. UTILIZZARE SOLO SE NECESSARIE
 int g_LegendreN; // variabile che serve nel capitolo 5 per i polinomi di Legendre
 double alpha = 10.0; // definita da "trajectory.cpp" (cap. 06)
 
@@ -32,6 +35,10 @@ double alpha = 10.0; // definita da "trajectory.cpp" (cap. 06)
 //          fdata << x << "    " << gauss << endl;
 // e una volta terminato devi chiudere il file:
 //          fdata.close();
+//
+//
+// conviene anche scrivere tutte le caratteristiche in un file .gp
+// c'è un esempio.
 
 
 
@@ -1481,8 +1488,8 @@ void EulerStep(double t, double *Y, void (*RHSFunc)(double, double *, double *),
     // *RHSFunc() punta al Right-Hand-Side-Function (in questo caso dYdt())
     
     int k; // variabile per visitare tutte le componenti di *Y
-    double rhs[NMAX_EQ]; // per assicurarsi che rhs[] sia grande 
-                     // usiamo NMAX_EQ (neq < 256)
+    double rhs[NMAX_EQ]; // per assicurarsi che rhs[] sia grande abbastanza
+                         // usiamo NMAX_EQ (neq < 256)
 
     // calcolo il lato destro dell'equazione
     RHSFunc (t, Y, rhs);
@@ -1604,6 +1611,122 @@ void RK4Step(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R
 
 }
 
+// implemento il metodo di Verlet per la posizione
+// gli do in input i puntatori ai vettori posizione e velocità, la dimensione
+// degli array (ordine della EDO), l'incremento degli intervalli e la funzione 
+// accelerazione
+void PositionVerletStep(double *x, double *v, int neq, double dt,
+                        void (*acceleration)(double *, double *, int)){
+
+    double a[NMAX_EQ]; // creo il vettore per l'accelerazione
+
+    // calcolo x per mezzi step
+    for( int i = 0 ; i < neq ; i++ ){
+
+        x[i] += 0.5 * dt * v[i];
+
+    }
+
+    // calcolo l'accelerazione a t = i*t + t/2
+    acceleration( x, a, neq );
+
+    // calcolo la velocità per step interi
+    for( int i = 0 ; i < neq ; i++ ){
+
+        v[i] += dt * a[i];
+
+    }
+
+    // calcolo la posizione per step intero
+    for( int i = 0 ; i < neq ; i++ ){
+
+        x[i] += 0.5 * dt * v[i];
+
+    }
+
+}
+
+// implemento il metodo di Verlet per la posizione (alternativo)
+// questo metodo è stato proposto dal professore come una versione che
+// riutilizza l'approccio standard del RK-method, richiamando "RHSFunc" come
+// "Acceleration".
+// In questo caso neq è il numero totale di equazioni.
+// gli do in input 
+void PositionVerletStep2(double t, double *Y, void (*RHSFunc)(double,
+                         double *, double *), double dt, int neq){
+    
+    int n;
+    double dYdt[NMAX_EQ];
+    // nota che nelle righe che seguono è corretto dividere per un intero poiché
+    // in aritmetica dei puntatori si deve usare solo un intero.
+    double *v = Y + neq/2; // simple pointer arithmetic
+    double *x = Y;
+    double *a = dYdt + neq/2;
+
+    // 1. Evolve positions by half a step [drift]
+    for( n = 0 ; n < neq/2 ; n++ ){
+        
+        x[n] += 0.5 * dt * v[n];
+    
+    }
+
+    // 2. Compute acceleration at t= t(n+1/2)
+    RHSFunc(t+dt/2.0, Y, dYdt);
+
+    // 3. Evolve velocities for full step
+    for( n = 0 ; n < neq/2 ; n++ ){
+        
+        v[n] += dt * a[n];
+    
+    }
+
+    // 4. Evolve positions by half a step
+    for( n = 0 ; n < neq/2.0 ; n++ ){
+        
+        x[n] += 0.5 * dt * v[n];
+
+    }
+
+}
+
+// implemento il metodo di Verlet per la posizione
+// gli do in input i puntatori ai vettori posizione e velocità, la dimensione
+// degli array (ordine della EDO), l'incremento degli intervalli e la funzione 
+// accelerazione
+void VelocityVerletStep(double *x, double *v, int neq, double dt,
+                        void (*acceleration)(double *, double *, int)){
+
+    double a[NMAX_EQ]; // creo il vettore per l'accelerazione
+
+    // calcolo l'accelerazione a t = i*t
+    acceleration( x, a, neq );
+
+    // calcolo v per mezzi step
+    for( int i = 0 ; i < neq ; i++ ){
+
+        v[i] += 0.5 * dt * a[i];
+
+    }
+
+    // calcolo la posizione  per step interi
+    for( int i = 0 ; i < neq ; i++ ){
+
+        x[i] += dt * v[i];
+
+    }
+
+    // calcolo l'accelerazione per x^{n+1}
+    acceleration( x, a, neq );
+
+    // calcolo v per step intero
+    for( int i = 0 ; i < neq ; i++ ){
+
+        v[i] += 0.5 * dt * a[i];
+
+    }
+    
+}
+
 
 // ------------------ ode1.cpp ------------------- //
 
@@ -1662,5 +1785,33 @@ void RHSFuncOde3(double t, double *Y, double *R){
     R[1] = vy;
     R[2] = -x/( r*r*r );
     R[3] = -y/( r*r*r );
+
+}
+
+// ------------------ harmonic.cpp ------------------- //
+
+// definisco il Right-Hand-Side-Function (è problem dependent). 
+// Gli do in input t e il puntatore ad Y e in uscita (tramite il puntatore)
+// mi faccio dare R
+void RHSFuncOde4(double t, double *Y, double *R){
+
+    // Compute the right-hand side of the ODE (2 equation)
+    double x = Y[0];
+    double y = Y[1];
+
+    R[0] = y;
+    R[1] = - OMEGA * OMEGA * x;
+
+}
+
+// implemento la funzione accelerazione che mi serve per il metodo di Verlet
+// gli do in input gli array di posizione e accelerazione, oltre ad il numero di
+// punti
+void acceleration(double *x, double *a, int n){
+
+    for( int i = 0 ; i < n ; i++ ){
+
+        a[i] = - OMEGA * OMEGA * x[i];
+    }
 
 }

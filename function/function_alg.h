@@ -162,6 +162,12 @@ void RK2StepHeun(double, double *, void (*)(double, double *, double *),
                  double, int);
 void RK4Step(double, double *, void (*)(double, double *, double *), 
              double, int);
+void PositionVerletStep(double *, double *, int, double, void (*)(double *,
+                        double *, int));
+void PositionVerletStep2(double, double *, void (*)(double,
+                         double *, double *), double, int);
+void VelocityVerletStep(double *, double *, int, double, void (*)(double *,
+                        double *, int));
 
 // ode1.cpp
 void RHSFuncOde1(double, double *,double *);
@@ -174,6 +180,9 @@ void RHSFuncOde2(double, double *,double *);
 // kepler.cpp
 void RHSFuncOde3(double, double *,double *);
 
+// harmonic.cpp
+void RHSFuncOde4(double, double *,double *);
+void acceleration(double *, double *, int);
 
 
 #endif // fine del if della prima riga

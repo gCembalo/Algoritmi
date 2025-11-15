@@ -27,6 +27,8 @@ void RK4Step(double, double *, void (*)(double, double *, double *), double, int
 void acceleration(double *, double *, int);
 void PositionVerletStep(double *, double *, int, double, void (*)(double *,
                         double *, int));
+void PositionVerletStep2(double, double *, void (*)(double,
+                         double *, double *), double, int);
 void VelocityVerletStep(double *, double *, int, double, void (*)(double *,
                         double *, int));
 
@@ -318,7 +320,8 @@ void acceleration(double *x, double *a, int n){
 // gli do in input i puntatori ai vettori posizione e velocità, la dimensione
 // degli array (ordine della EDO), l'incremento degli intervalli e la funzione 
 // accelerazione
-void PositionVerletStep(double *x, double *v, int neq, double dt, void (*acceleration)(double *, double *, int)){
+void PositionVerletStep(double *x, double *v, int neq, double dt,
+                        void (*acceleration)(double *, double *, int)){
 
     double a[NMAX_EQ]; // creo il vettore per l'accelerazione
 
@@ -348,11 +351,55 @@ void PositionVerletStep(double *x, double *v, int neq, double dt, void (*acceler
 
 }
 
+// implemento il metodo di Verlet per la posizione (alternativo)
+// questo metodo è stato proposto dal professore come una versione che
+// riutilizza l'approccio standard del RK-method, richiamando "RHSFunc" come
+// "Acceleration".
+// In questo caso neq è il numero totale di equazioni.
+// gli do in input 
+void PositionVerletStep2(double t, double *Y, void (*RHSFunc)(double,
+                         double *, double *), double dt, int neq){
+    
+    int n;
+    double dYdt[NMAX_EQ];
+    // nota che nelle righe che seguono è corretto dividere per un intero poiché
+    // in aritmetica dei puntatori si deve usare solo un intero.
+    double *v = Y + neq/2; // simple pointer arithmetic
+    double *x = Y;
+    double *a = dYdt + neq/2;
+
+    // 1. Evolve positions by half a step [drift]
+    for( n = 0 ; n < neq/2 ; n++ ){
+        
+        x[n] += 0.5 * dt * v[n];
+    
+    }
+
+    // 2. Compute acceleration at t= t(n+1/2)
+    RHSFunc(t+dt/2.0, Y, dYdt);
+
+    // 3. Evolve velocities for full step
+    for( n = 0 ; n < neq/2 ; n++ ){
+        
+        v[n] += dt * a[n];
+    
+    }
+
+    // 4. Evolve positions by half a step
+    for( n = 0 ; n < neq/2.0 ; n++ ){
+        
+        x[n] += 0.5 * dt * v[n];
+
+    }
+
+}
+
 // implemento il metodo di Verlet per la posizione
 // gli do in input i puntatori ai vettori posizione e velocità, la dimensione
 // degli array (ordine della EDO), l'incremento degli intervalli e la funzione 
 // accelerazione
-void VelocityVerletStep(double *x, double *v, int neq, double dt, void (*acceleration)(double *, double *, int)){
+void VelocityVerletStep(double *x, double *v, int neq, double dt,
+                        void (*acceleration)(double *, double *, int)){
 
     double a[NMAX_EQ]; // creo il vettore per l'accelerazione
 
