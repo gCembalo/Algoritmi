@@ -10,6 +10,9 @@ using namespace std;
 // includo l'header
 #include "function_alg.h"
 
+#define NMAX_EQ 64 // numero massimo di eq (lo inseriamo per sicurezza e per non
+// lasciare array con dimensione variabile)
+
 int g_LegendreN; // variabile che serve nel capitolo 5 per i polinomi di Legendre
 double alpha = 10.0; // definita da "trajectory.cpp" (cap. 06)
 
@@ -471,7 +474,7 @@ double Gauss(double (*F)(double), double a, double b, int N, int ng){
     // Implemento la funzione per funzionare fino a 5 punti
 
     // definisco gli array di pesi e zeri del polinomio di Legendre
-    double w[ng], x[ng];
+    double w[NMAX_EQ], x[NMAX_EQ];
     // definisco la variabile che mi somma l'integrale
     double sum = 0.0;
 
@@ -608,7 +611,7 @@ double Gauss2D(double (*F)(double, double), double x0, double x1, double y0,
     // Implemento la funzione per funzionare fino a 5 punti
 
     // definisco gli array di pesi e zeri del polinomio di Legendre
-    double w[ng], x[ng];
+    double w[NMAX_EQ], x[NMAX_EQ];
 
     // Riempio gli array in base al numero di punti che abbiamo
     if(ng == 1){
@@ -1478,8 +1481,8 @@ void EulerStep(double t, double *Y, void (*RHSFunc)(double, double *, double *),
     // *RHSFunc() punta al Right-Hand-Side-Function (in questo caso dYdt())
     
     int k; // variabile per visitare tutte le componenti di *Y
-    double rhs[256]; // per assicurarsi che rhs[] sia grande 
-                     // abbastanza (neq < 256)
+    double rhs[NMAX_EQ]; // per assicurarsi che rhs[] sia grande 
+                     // usiamo NMAX_EQ (neq < 256)
 
     // calcolo il lato destro dell'equazione
     RHSFunc (t, Y, rhs);
@@ -1500,7 +1503,7 @@ void RK2StepMid(double t, double *Y, void (*RHSFunc)(double t, double *Y,
                 double *R), double h, int neq){
     
     // definisco i vettori per gli step intermedi
-    double Y1[neq], k1[neq], k2[neq];
+    double Y1[NMAX_EQ], k1[NMAX_EQ], k2[NMAX_EQ];
     
     RHSFunc(t,Y,k1); // calcolo k1 con il RSH con t_n e Y_n
 
@@ -1530,7 +1533,7 @@ void RK2StepHeun(double t, double *Y, void (*RHSFunc)(double t, double *Y,
                  double *R), double h, int neq){
     
     // definisco i vettori per gli step intermedi
-    double Y1[neq], k1[neq], k2[neq];
+    double Y1[NMAX_EQ], k1[NMAX_EQ], k2[NMAX_EQ];
     
     RHSFunc(t,Y,k1); // calcolo k1 con il RSH con t_n e Y_n
 
@@ -1560,7 +1563,7 @@ void RK4Step(double t, double *Y, void (*RHSFunc)(double t, double *Y, double *R
              double h, int neq){
     
     // definisco i vettori per gli step intermedi
-    double Y1[neq], k1[neq], k2[neq], k3[neq], k4[neq];
+    double Y1[NMAX_EQ], k1[NMAX_EQ], k2[NMAX_EQ], k3[NMAX_EQ], k4[NMAX_EQ];
     
     RHSFunc(t,Y,k1); // calcolo k1 con il RSH con t_n e Y_n
 
