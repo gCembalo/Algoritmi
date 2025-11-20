@@ -16,6 +16,9 @@ set ylabel "y(x)"  font ",14"
 # set logscale y
 # set logscale x
 
+# Settiamo la griglia
+set grid
+
 set key         font ",14"
 set lmargin at screen 0.12
 set rmargin at screen 0.95
