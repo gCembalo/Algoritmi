@@ -1,3 +1,7 @@
+// solve the eigenvalue problem
+// \dv[2]{\phi}{x} = -k^2\phi
+// con \phi(0) = 0 , \phi(1) = 0
+// esercizio guidato con i punti nelle slide (pag. 11)
 //
 
 #include <iostream>
@@ -13,6 +17,7 @@ void RK4Step(double, double *, void (*)(double, double *, double *), double, int
 void RHSFuncWave(double, double *, double *);
 double ResidualWave(double);
 int bisection(double (*)(double), double, double, double, double &, int &);
+int Bracket(double (*)(double), double, double, double, double *, double *, int &);
 
 int main(){
 
@@ -28,12 +33,12 @@ int main(){
 
     int neq = 3; // numero equazioni
     // mettiamo come terzo elemento di Y il coefficiente k
-    int npoint = 100; // numero punti
+    int nstep = 100; // numero punti
 
     double x; // variabile
     double x0 = 0.0; // variabile iniziale
-    double xf = 20.0; // variabile finale
-    double dx = fabs(xf - x0) / npoint; // step fisso
+    double xf = 1.0; // variabile finale
+    double dx = fabs(xf - x0) / nstep; // step fisso
 
     // setto la condizioni iniziali
     double phi0 = 0.0;
@@ -43,7 +48,7 @@ int main(){
     double k0 = 1.0 , kf = 5.0;
 
     // variabile dello shooting
-    double s = 1.0;
+    double s = 1.0; // dy/dx |0 = 1
 
     // definisco l'array delle soluzioni e imposto le condizioni iniziali
     double Y[neq];
@@ -64,7 +69,7 @@ int main(){
         fdata << x << "  " << Y[0] << "  " << Y[1] << endl;
 
         // risolvo le equazioni del moto usando RK a 4 step
-        for( int i = 0 ; i < npoint ; i++ ){
+        for( int i = 0 ; i < nstep ; i++ ){
 
             RK4Step(x, Y, RHSFuncWave, dx, neq); // risolvo la ODE
             x += dx;
@@ -80,21 +85,78 @@ int main(){
 
     }
 
-    double dk = ( kf - k0 )/(double)npoint;
+    // calcolo il residuo per poi vedere quale k utilizzare
+    double dk = fabs( k0 - kf )/(double)nstep;
     double res; // variabile da stampare
 
-    for( int i = 0 ; i < npoint ; i++){
+    k = k0; // inizializzo il valore di k
+
+    for( int i = 0 ; i < nstep ; i++){
 
         // richiamo la funzione residuo dando in pasto la s corrente
         res = ResidualWave(k);
 
-        k = k0 + i * dk;
+        k += dk;
 
         fdata << k << "  " << res << endl;
 
     }
 
+    // uso bisezione per trovare lo zero del residuo e quindi il valore di k
+    double kzero; // variabile per lo zero
+    int l = 0; // variaible per le iterazioni di bisezione 
+               // (inutile per l'esercizio)
+    double tol = 1.e-9;
+
+    double status;
+    status = bisection(ResidualWave, k0, kf, tol, k0, l);
+
+    // aggiungo un controllo sullo zero del residuo
+    if (status == 0){
+
+        cout << "k = " << k0 << "; |k-pi| = " << fabs(k0 - M_PI)
+             << "; iterazioni = " << l << endl;
+
+    }else{
+
+        cout << "No solution!" << endl;
+
+    }
+
+    // utilizzo il bracketing per trovare tutti gli zeri tra 0 e 20
+    double a = 0.0 , b = 20.0; // estremi di integrazione
+    int n = 50 , nr = 64; // #intervalli e #zeri
+    double kL[nr] , kR[nr]; // array di estremi Left e Right
+
     fdata.close();
+
+    Bracket(ResidualWave, a, b, n, kL, kR, nr);
+
+    // ora posso cercare gli zeri in tutti gli intervalli
+    cout << "+--------------------------------------+\n" << endl;
+    cout << "Ricerco gli zeri tra x = 0 e x = 20 :\n" << endl;
+
+    l = 0; // rimetto a zero le iterazioni
+
+    double err;
+
+    for( int i = 0 ; i < nr ; i++ ){
+
+        err = bisection(ResidualWave, kL[i], kR[i], tol, k0, l);
+
+        // metto un controllo sugli zeri
+        if ( err==0 )
+        {
+            cout << "x" << i+1 << " = " << k0 << "\t iterazioni = " << l << endl;
+        }
+        else 
+        {
+            cout << "Nessuna soluzione!" << endl;
+        }
+
+        l = 0;
+
+    }
 
     return 0;
 
@@ -118,23 +180,24 @@ void RHSFuncWave(double x, double *Y, double *R){
 // sarà la funzione che diamo alla funzione per la ricerca degli zeri
 // è problem dependent.
 // gli do in input la guess sulla derivata
-double ResidualWave(double s){
+double ResidualWave(double k){
 
     // ricopio esattamente il main precedente per trovare la soluzione con s
     int neq = 3; // numero equazioni
     // mettiamo come terzo elemento di Y il coefficiente k
-    int npoint = 100; // numero punti
+    int nstep = 100; // numero punti
 
     double x; // variabile
     double x0 = 0.0; // variabile iniziale
-    double xf = 20.0; // variabile finale
-    double dx = fabs(xf - x0) / npoint; // step fisso
+    double xf = 1.0; // variabile finale
+    double dx = fabs(xf - x0) / nstep; // step fisso
 
     // setto la condizioni iniziali
     double phi0 = 0.0;
     double phif = 0.0;
 
-    double k = 1.0; // coefficiente della ode
+    // variabile dello shooting
+    double s = 1.0; // dy/dx |0 = 1
 
     // definisco l'array delle soluzioni e imposto le condizioni iniziali
     double Y[neq];
@@ -142,23 +205,18 @@ double ResidualWave(double s){
     Y[1] = s;
     Y[2] = k;
 
-    // setto le condizioni iniziali
-    Y[0] = phi0; // phi(r)
-    Y[1] = s; // dphi/dr
-    Y[2] = k;
-
     x = x0; // setto il punto di integrazione iniziale
 
     // risolvo le equazioni del moto usando RK a 4 step
-    for( int i = 0 ; i < npoint ; i++ ){
+    for( int i = 0 ; i < nstep ; i++ ){
 
         RK4Step(x, Y, RHSFuncWave, dx, neq); // risolvo la ODE
         x += dx;
 
     }
 
-    // return il residuo
-    return Y[0] - 1;
+    // return il residuo (il valore di Y[1] è 1.0 in questo caso)
+    return Y[0] - 0.0;
 
 }
 
@@ -313,5 +371,47 @@ int bisection(double (*F)(double), double a, double b, double tol,
         return 0;
 
     }
+
+}
+
+// bracketing function
+// gli do in input la funzione, gli estremi a e b, il numero di intervalli, 
+// un array per gli estremi (sinistro e destro) degli intervalli, e un 
+// riferimento al numero di zeri
+int Bracket(double (*F)(double), double a, double b, double n, double *xL, 
+            double *xR, int &nroots){
+
+    // definisco le variabili che uso per contare
+    int count = 0, i; // count mi dice quanti zeri ho
+    double dx = ( b - a )/(double)n; // spacing
+    double aL, aR; // estremi di ogni sotto intervallo
+
+    double fL, fR; // valori delle funzioni valutate agli estremi
+    fL = F(a);
+
+    // faccio il loop su tutti gli intervalli
+    for( i = 0 ; i < n ; i++ ){
+
+        aL = a + i*dx;
+        aR = a + (i+1)*dx;
+
+        // metto la condizione in cui abbiamo un cambiamento di segno e quindi
+        // con la quale ci ricordiamo il valore
+        fR = F(aR);
+        if( fL*fR <= 0.0 ){
+
+            // metto gli estremi nell'array
+            xL[count] = aL;
+            xR[count] = aR;
+            count++; // aggiorno il numero di roots
+
+        }
+        
+        fL = fR;
+
+    }
+
+    nroots = count;
+    return 0;
 
 }

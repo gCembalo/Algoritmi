@@ -40,12 +40,12 @@ int main(){
     fdata << setiosflags ( ios::scientific );
 
     int neq = 2; // numero equazioni
-    int npoint = 1000; // numero punti
+    int nstep = 1000; // numero punti
 
     double r; // variabile raggio
     double r0 = 0.0; // raggio iniziale
     double rf = 20.0; // raggio finale
-    double dr = fabs(rf - r0) / npoint; // step fisso
+    double dr = fabs(rf - r0) / nstep; // step fisso
 
     // setto la condizioni iniziali
     double phi0 = 0.0;
@@ -54,6 +54,7 @@ int main(){
     // variabile derivata di phi
     double s; // guess, derivata di phi in r
     double s0 = 0.0 , sf = 5.0;
+    double ds;
 
     // definisco l'array delle soluzioni e imposto le condizioni iniziali
     double Y[neq];
@@ -73,7 +74,7 @@ int main(){
         fdata << r << "  " << Y[0] << "  " << Y[1] << endl;
 
         // risolvo le equazioni del moto usando RK a 4 step
-        for( int i = 0 ; i < npoint ; i++ ){
+        for( int j = 0 ; j < nstep ; j++ ){
 
             RK4Step(r, Y, RHSFuncPoisson, dr, neq); // risolvo la ODE
             r += dr;
@@ -90,34 +91,55 @@ int main(){
     }
 
     // ----------------------------- STEP 2 ----------------------------- //
-    double ds = ( sf - s0 )/(double)npoint;
+    ds = fabs( s0 - sf )/(double)nstep;
     double res; // variabile da stampare
+    
+    s = s0; // inizializzo il valore di s
 
-    for( int i = 0 ; i < npoint ; i++){
+    for( int i = 0 ; i < nstep ; i++ ){
 
         // richiamo la funzione residuo dando in pasto la s corrente
         res = ResidualPoisson(s);
 
-        s = s0 + i * ds;
+        s += ds;
 
         fdata << s << "  " << res << endl;
 
     }
 
-    fdata.close();
+    fdata << endl << endl;
 
     // ----------------------------- STEP 3 ----------------------------- //
     double szero; // variabile per lo zero
     int l = 0; // variaible per le iterazioni di bisezione
+               // (inutile per l'esercizio)
     double tol = 1.e-9;
 
-    bisection(ResidualPoisson, 0.0, 5.0, tol, s0, l);
+    bisection(ResidualPoisson, s0, sf, tol, s0, l);
 
     cout << s0 << endl;
 
     // ----------------------------- STEP 4 ----------------------------- //
     // confronto con la soluzione analitica
+    Y[1] = s0; // imposto la guess di s nello zero che ho trovato
 
+    double Yex; // variabile soluzione esatta
+
+    r = r0; // risetto la variabile r
+
+    for( int i = 0 ; i < nstep ; i++ ){
+
+        RK4Step(r, Y, RHSFuncPoisson, dr, neq); // cerco la soluzione
+
+        r += dr;
+        Yex = 1 - 0.5 * ( r + 2 ) * exp( -r ); // calcolo la soluzione esatta
+
+        // stampo per il confronto
+        fdata << r << "  " << Y[0]/r << "  " << Yex/r << endl;
+
+    }
+
+    fdata.close();
 
     return 0;
 
@@ -143,12 +165,12 @@ double ResidualPoisson(double s){
 
     // ricopio esattamente il main precedente per trovare la soluzione con s
     int neq = 2; // numero equazioni
-    int npoint = 1000; // numero punti
+    int nstep = 1000; // numero punti
 
     double r; // variabile raggio
     double r0 = 0.0; // raggio iniziale
     double rf = 20.0; // raggio finale
-    double dr = fabs(rf - r0) / npoint; // step fisso
+    double dr = fabs(rf - r0) / nstep; // step fisso
 
     // setto la condizioni iniziali
     double phi0 = 0.0;
@@ -164,17 +186,14 @@ double ResidualPoisson(double s){
     r = r0; // setto il punto di integrazione iniziale
 
     // risolvo le equazioni del moto usando RK a 4 step
-    for( int i = 0 ; i < npoint ; i++ ){
-
-        Y[0] = phi0;
-        Y[1] = s;
+    for( int i = 0 ; i < nstep ; i++ ){
 
         RK4Step(r, Y, RHSFuncPoisson, dr, neq); // risolvo la ODE
         r += dr;
 
     }
 
-    // return il residuo
+    // return il residuo (il valore di Y[1] è 1.0 in questo caso)
     return Y[0] - 1;
 
 }
