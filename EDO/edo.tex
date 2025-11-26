@@ -1,0 +1,288 @@
+\documentclass[12pt,a4paper]{article}
+
+% -------------------------------------------------------
+% PACCHETTI DI BASE
+% -------------------------------------------------------
+\usepackage[utf8]{inputenc}      % Per lettere accentate
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}      % Lingua italiana
+\usepackage{lmodern}             % Font migliore
+\usepackage{setspace}            % Gestione spaziatura
+
+% -------------------------------------------------------
+% MATEMATICA
+% -------------------------------------------------------
+\usepackage{amsmath, amssymb, amsthm}   % Matematica standard
+\usepackage{mathtools}                  % Miglioramenti AMS
+\usepackage{physics}                    % Comandi per derivate, vettori, ecc.
+\usepackage{bm}                         % Per vettori e simboli in grassetto
+
+% -------------------------------------------------------
+% GRAFICA E TABELLE
+% -------------------------------------------------------
+\usepackage{graphicx}                   % Inserimento immagini
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}                   % Tabelle professionali
+\usepackage{array}                      % Miglior controllo tabelle
+\usepackage{float}                      % Figure dove vuoi tu
+
+% -------------------------------------------------------
+% CODICE (opzionale)
+% -------------------------------------------------------
+\usepackage{listings}                   
+\usepackage{xcolor}                     
+\lstset{
+    basicstyle=\ttfamily\small,
+    numbers=left,
+    numberstyle=\tiny,
+    frame=single,
+    breaklines=true
+}
+
+% -------------------------------------------------------
+% IMPOSTAZIONI PAGINA
+% -------------------------------------------------------
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\setstretch{1.15}                       % Interlinea
+
+% -------------------------------------------------------
+% COMANDI PERSONALIZZATI
+% -------------------------------------------------------
+\newcommand{\R}{\mathbb{R}}             % Shortcut per numeri reali
+\newcommand{\vect}[1]{\mathbf{#1}}      % Vettori in grassetto
+\newcommand{\absd}[1]{\left|#1\right|}  % Valore assoluto
+
+% -------------------------------------------------------
+% FINE PREAMBOLO
+% -------------------------------------------------------
+
+
+% -------------------------------------------------------
+% Titolo e autore
+% -------------------------------------------------------
+\title{Conversione di un'EDO del Secondo Ordine in un Sistema di Primo Ordine}
+\author{Gabriele Cembalo}
+
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Obiettivo}
+
+Dato un problema descritto da un'equazione differenziale ordinaria (EDO) di \textbf{secondo ordine}, vogliamo trasformarlo in un \textbf{sistema equivalente di equazioni del primo ordine}. Questo è utile per l'analisi qualitativa e soprattutto per la risoluzione numerica.
+
+
+\section{Forme iniziali}
+
+\textbf{Caso scalare}:
+\begin{equation}
+    y'' = f(t, y, y')
+\end{equation}
+
+\noindent\textbf{Caso vettoriale}:
+\begin{align}
+    &\mathbf{y}'' = \mathbf{F}(t, \mathbf{y}, \mathbf{y}') \\
+    &\mathbf{y}, \mathbf{y}' \in \mathbb{R}^n
+\end{align}
+
+
+\subsection{Procedura di conversione}
+
+
+\subsubsection{Introduzione delle variabili ausiliarie}
+
+Definiamo la derivata prima come una nuova variabile:
+\begin{equation}
+    v = y' \qquad\text{(caso scalare)}
+\end{equation}
+\begin{equation}
+    \mathbf{v} = \mathbf{y}'
+    \qquad\text{(caso vettoriale)}
+\end{equation}
+
+\subsubsection{Riscrittura del sistema del primo ordine}
+
+\paragraph{Caso scalare:}
+\begin{equation}
+    \begin{cases}
+        y' = v \\
+        v' = f(t, y, v)
+    \end{cases}
+\end{equation}
+
+\paragraph{Caso vettoriale:}
+\begin{equation}
+    \begin{cases}
+        \mathbf{y}' = \mathbf{v} \\[6pt]
+        \mathbf{v}' = \mathbf{F}(t, \mathbf{y}, \mathbf{v})
+    \end{cases}
+\end{equation}
+
+\subsubsection{Forma compatta con vettore di stato}
+Definiamo il vettore di stato:
+\begin{equation}
+    \mathbf{x} = \begin{pmatrix}
+        \mathbf{y} \\
+        \mathbf{v}
+    \end{pmatrix} \in \mathbb{R}^{2n}
+\end{equation}
+
+Allora il sistema diventa:
+\begin{equation}
+    \mathbf{x}' = \mathbf{G}(t, \mathbf{x})
+\end{equation}
+
+
+\subsubsection{Condizioni iniziali}
+
+Per un'EDO di secondo ordine, servono:
+\begin{equation}
+    y(t_0) = y_0, \qquad y'(t_0) = v_0
+\end{equation}
+
+In forma di stato:
+
+\begin{equation}
+    \mathbf{x}(t_0) = \begin{pmatrix}
+        y_0 \\
+        v_0
+    \end{pmatrix}
+\end{equation}
+
+
+\section{Associazione tra indici del vettore di stato e RHS}
+
+Quando si implementa numericamente un sistema del primo ordine, si usa spesso la notazione:
+\begin{equation}
+    \mathbf{Y} = \begin{pmatrix}
+        Y[0] \\
+        Y[1] \\
+        \vdots \\
+        Y[n]
+    \end{pmatrix} , \qquad \mathbf{R} = \begin{pmatrix}
+        R[0] \\
+        R[1] \\
+        \vdots \\
+        R[n]
+    \end{pmatrix}
+\end{equation}
+dove $\mathbf{R}$ rappresenta la \textit{Right-Hand-Side function}, ovvero $\mathbf{R} = \dfrac{d\mathbf{Y}}{dt}$.
+
+
+\subsection{Regola fondamentale}
+
+\begin{equation}
+    \boxed{R[i] = \dfrac{d}{dt}Y[i]}
+\end{equation}
+
+Questo significa che l'\textbf{ordine degli elementi in $\mathbf{R}$ deve rispettare esattamente l'ordine delle variabili in $\mathbf{Y}$}.
+
+
+\subsection{Esempio (caso scalare)}
+
+Dato:
+\begin{equation}
+    y'' = f(t,y,y')
+\end{equation}
+
+definiamo:
+\begin{equation}
+    Y[0] = y, \qquad Y[1] = y'
+\end{equation}
+Allora le equazioni diventano:
+\begin{equation}
+    \begin{cases}
+        R[0] = \dfrac{d}{dt}Y[0] = Y[1] \\
+        R[1] = \dfrac{d}{dt}Y[1] = f(t,Y[0],Y[1])
+    \end{cases}
+\end{equation}
+
+
+\subsection{Osservazioni fondamentali}
+\begin{itemize}
+    \item Non esiste un ordine “giusto” universale per $Y[i]$, \textbf{ma} qualsiasi ordine si scelga deve essere mantenuto coerente anche in $\mathbf{R}$.
+    \item Se si cambia l'ordine delle variabili in $\mathbf{Y}$, si deve cambiare anche l'ordine delle corrispondenti equazioni in $\mathbf{R}$.
+    \item L'associazione è sempre diretta: $Y[i] \longleftrightarrow R[i]$.
+\end{itemize}
+
+
+\subsection{Schema riassuntivo}
+\begin{equation}
+    \boxed{
+        \mathbf{Y} = \begin{pmatrix}
+            y \\
+            y'
+        \end{pmatrix} 
+    \quad\Rightarrow\quad
+    \mathbf{R} = \begin{pmatrix}
+        y' \\
+        f(t,y,y')
+    \end{pmatrix}
+    }
+\end{equation}
+
+
+\section{Esempi applicativi}
+
+\subsection{Oscillatore armonico semplice}
+\begin{equation}
+    y'' + \omega^2 y = 0
+\end{equation}
+\begin{equation}
+    \begin{cases}
+        y' = v \\
+        v' = -\omega^2 y
+    \end{cases}
+\end{equation}
+
+
+\subsection{Pendolo semplice (non linearizzato)}
+\begin{equation}
+    \theta'' + \dfrac{g}{L} \sin \theta = 0
+\end{equation}
+\begin{equation}
+    \begin{cases}
+        \theta' = \omega \\
+        \omega' = -\dfrac{g}{L} \sin\theta
+    \end{cases}
+\end{equation}
+
+
+\subsection{Equazione del moto gravitazionale}
+\begin{equation}
+    \frac{d^2 \mathbf{x}}{d t^2} = -\frac{GM}{|\mathbf{x}|^3} \mathbf{x}
+\end{equation}
+\begin{equation}
+    \begin{cases}
+        \mathbf{x}' = \mathbf{v} \\[4pt]
+        \mathbf{v}' = -\dfrac{GM}{|\mathbf{x}|^3} \mathbf{x}
+    \end{cases}
+\end{equation}
+
+
+\section{Ricetta riassuntiva}
+\begin{enumerate}
+    \item Data un'equazione del tipo $y'' = f(t, y, y')$, introduci $v = y'$.
+    \item Scrivi il sistema:
+    \begin{equation}
+        \begin{cases}
+            y' = v \\
+            v' = f(t, y, v)
+        \end{cases}
+    \end{equation}
+    \item Definisci il vettore di stato $\mathbf{Y} = (y, v)^T$.
+    \item Costruisci la RHS rispettando la corrispondenza:
+    \begin{equation}
+        R[i] = \dfrac{d}{dt}Y[i]
+    \end{equation}
+    \item Specifica le condizioni iniziali $y(t_0)$ e $v(t_0)$.
+\end{enumerate}
+
+
+\subsection{Utilità pratica}
+Questa procedura consente di applicare direttamente metodi numerici di integrazione (Euler, Runge--Kutta, metodi impliciti) e facilita lo studio qualitativo del sistema, come stabilità, attrattori o linearizzazione.
+
+\end{document}
