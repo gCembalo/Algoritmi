@@ -41,6 +41,7 @@ int main(){
     double xf = 10.0; // variabile finale
     double dxF = fabs(xf - x0) / nstep; // step avanti (forward)
     double dxB = -fabs(xf - x0) / nstep; // step avanti (Backward)
+    double E; // variabile energia
 
     x = x0; // setto il punto di integrazione iniziale
 
@@ -86,6 +87,59 @@ int main(){
 
     fdata << endl << endl;
 
+    // ora devo utilizzare il residuo e cercarne lo zero così da trovare lo spettro
+    double res; // variabile da stampare
+
+    for( int i = 0 ; i < nstep ; i++){
+
+        E = 5*i/(double)( nstep - 1 ) + 1.e-3;
+
+        // richiamo la funzione residuo dando in pasto la s corrente
+        res = ResidualQho(E);
+
+        fdata << E << "  " << res << endl;
+
+    }
+
+    fdata.close();
+
+    // utilizzo il bracketing per trovare tutti gli zeri tra 0 e 20
+    double E0; // variabile per lo zero
+    double Ei = 0.0 , Ef = 5.0; // estremi di integrazione
+    int n = 50 , nr = 64; // #intervalli e #zeri
+    double El[nr] , Er[nr]; // estremi left e right
+    int l = 0; // variaible per le iterazioni di bisezione 
+               // (inutile per l'esercizio)
+    double tol = 1.e-9;
+
+    Bracket(ResidualQho, Ei, Ef, n, El, Er, nr);
+
+    // ora posso cercare gli zeri in tutti gli intervalli
+    cout << "+--------------------------------------+\n" << endl;
+    cout << "Ricerco gli zeri tra E = 0 e E = 5 :\n" << endl;
+
+    l = 0; // rimetto a zero le iterazioni
+
+    double err;
+
+    for( int i = 0 ; i < nr ; i++ ){
+
+        err = bisection(ResidualQho, El[i], El[i], tol, E0, l);
+
+        // metto un controllo sugli zeri
+        if ( err==0 )
+        {
+            cout << "E_" << i+1 << " = " << E0 << "\t iterazioni = " << l << endl;
+        }
+        else 
+        {
+            cout << "Nessuna soluzione!" << endl;
+        }
+
+        l = 0;
+
+    }
+
     return 0;
 
 }
@@ -110,7 +164,7 @@ void RHSFuncQho(double x, double *Y, double *R){
 // gli do in input la guess sulla derivata
 double ResidualQho(double E){
 
-    // ricopio esattamente il main precedente per trovare la soluzione con s
+    // ricopio esattamente il main precedente per trovare la soluzione
     int neq = 2; // numero equazioni
     int nstep = 1200; // numero punti
     int nstepL = 700 , nstepR = nstep - nstepL; // punti nei due intervalli
@@ -119,10 +173,10 @@ double ResidualQho(double E){
     double x0 = -10.0; // variabile iniziale
     double xf = 10.0; // variabile finale
 
-    double xm = 0.3; // matching point
+    double xm = 0.3; // matching point (arbitrario)
 
-    double dxF = fabs(xf - x0) / nstep; // step avanti (forward)
-    double dxB = -fabs(xf - x0) / nstep; // step avanti (Backward)
+    double dx0 = fabs( xf - x0 )/(double)nstep;
+    double dx; // incremento
 
     x = x0; // setto il punto di integrazione iniziale
 
@@ -132,35 +186,71 @@ double ResidualQho(double E){
     double YF[neq] , YB[neq]; // Forward e Backward
     YF[0] = YB[0] = exp( -x*x*0.5 );
     YF[1] = -x*YF[0];
-    YB[0] = -x*YB[0];
+    YB[1] = -x*YB[0];
 
-    // Integrazione Forward
+    // definisco la varabile di controllo per rimanere nell'intervallo
+    int controllo = 1;
 
     // risolvo le equazioni del moto usando RK a 4 step (Forward)
-    for( int i = 0 ; i < nstep ; i++ ){
+    while( controllo ){
 
-        RK4Step(x, Y, RHSFuncQho, dxF, neq); // risolvo la ODE
-        x += dxF;
+        dx = dx0;
+
+        if( x+dx > xm ){
+
+            dx = xm - x;
+            controllo = 0;
+
+        }
+
+        RK4Step(x, YF, RHSFuncQho, dx, neq); // risolvo la ODE
+        
+        x += dx;
 
     }
+
+    // salvo il matchingpoint di sinistra
+    double xml = x;
 
     // Integrazione Backward
+    controllo = 1;
     x = xf; // setto il punto di integrazione iniziale
 
-    // imposto le condizioni iniziali
-    Y[0] = exp( -x*x*0.5 );
-    Y[1] = -x*Y[0];
+    // risolvo le equazioni del moto usando RK a 4 step (Forward)
+    while( controllo ){
 
-    // risolvo le equazioni del moto usando RK a 4 step (Backward)
-    for( int i = 0 ; i < nstep ; i++ ){
+        dx = -dx0;
 
-        RK4Step(x, Y, RHSFuncQho, dxB, neq); // risolvo la ODE
-        x += dxB;
+        if( dx < xm - x ){
+
+            dx = xm - x;
+            controllo = 0;
+
+        }
+
+        RK4Step(x, YB, RHSFuncQho, dx, neq); // risolvo la ODE
+        
+        x += dx;
 
     }
 
-    // return il residuo (il valore di Y[1] è 1.0 in questo caso)
-    return Y[0] - g_E;
+    // controllo se i due matching point coincidono
+    double xmr = x;
+
+    if ( fabs(xmr - xml) > 1.e-14 ){
+
+        cout << "error at matching point." << endl;
+        cout << "xm(L) = " << xml << "; xm(R) = " << xmr << endl;
+
+    }
+
+    // calcolo del residuo
+    double fl = YF[1]*YB[0];
+    double fr = YF[0]*YB[1];
+    double R = (fl-fr)/sqrt( fl*fl + fr*fr ) + 1.e-7;
+
+    // return il residuo
+    return R;
 
 }
 
