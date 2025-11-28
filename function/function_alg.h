@@ -151,7 +151,7 @@ double velocity(double);
 double SecondDerivative(double (*)(double), double, double, double, double);
 
 
-//-------------------------------------------------- 7-ODE ---------------------------------------------------------//
+//------------------------------ 7-ODE -------------------------------------//
 
 // funzioni generiche
 void EulerStep(double, double *, void (*)(double, double *, double *), 
@@ -183,6 +183,40 @@ void RHSFuncOde3(double, double *,double *);
 // harmonic.cpp
 void RHSFuncOde4(double, double *,double *);
 void acceleration(double *, double *, int);
+
+
+
+//------------------------------ 8-ODE -------------------------------------//
+
+// poisson.cpp
+void RHSFuncPoisson(double, double *, double *);
+double ResidualPoisson(double);
+
+// wave.cpp
+void RHSFuncWave(double, double *, double *);
+double ResidualWave(double);
+
+// qho.cpp
+void RHSFuncQho(double, double *, double *);
+double ResidualQho(double);
+
+
+
+//--------------------------- 9-MultiArray ----------------------------------//
+
+// matrix.cpp
+// gauss_elim.cpp
+// gauss_elim2.cpp
+// tridiag.cpp
+// bvp.cpp
+
+
+
+//--------------------------- 10-PDE ----------------------------------//
+
+// elliptic.cpp
+// example.cpp
+// example.cpp
 
 
 #endif // fine del if della prima riga

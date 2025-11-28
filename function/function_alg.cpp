@@ -18,6 +18,7 @@ using namespace std;
 // definizione di variabili globali. UTILIZZARE SOLO SE NECESSARIE
 int g_LegendreN; // variabile che serve nel capitolo 5 per i polinomi di Legendre
 double alpha = 10.0; // definita da "trajectory.cpp" (cap. 06)
+static double g_E; // variabile globale per autostati, da "qho.cpp" (cap. 08)
 
 // Dichiarazione delle funzioni in base alla lezione. Potrebbero esserci 
 // funzioni definite più volte, quindi è sempre meglio controllare, 
@@ -1815,3 +1816,256 @@ void acceleration(double *x, double *a, int n){
     }
 
 }
+
+
+
+//------------------------------ 8-ODE -------------------------------------//
+
+
+// ------------------ poisson.cpp ------------------- //
+
+// definisco il Right-Hand-Side-Function (è problem dependent). 
+// Gli do in input t e il puntatore ad Y e in uscita (tramite il puntatore)
+// mi faccio dare R
+void RHSFuncPoisson(double r, double *Y, double *R){
+
+    double rho = exp(-r)/(8.0 * M_PI); // Scielded charge
+
+    R[0] = Y[1];
+    R[1] = - 4.0 * M_PI * r * rho;
+
+}
+
+// creo la funzione residuo che calcola quanto phi(r) si discosta da phi(20.0) = 1
+// sarà la funzione che diamo alla funzione per la ricerca degli zeri
+// è problem dependent.
+// gli do in input la guess sulla derivata
+double ResidualPoisson(double s){
+
+    // ricopio esattamente il main precedente per trovare la soluzione con s
+    int neq = 2; // numero equazioni
+    int nstep = 1000; // numero punti
+
+    double r; // variabile raggio
+    double r0 = 0.0; // raggio iniziale
+    double rf = 20.0; // raggio finale
+    double dr = fabs(rf - r0) / nstep; // step fisso
+
+    // setto la condizioni iniziali
+    double phi0 = 0.0;
+    double phif = 1.0; // condizione a grandi distanze, ovvero per rf
+
+    // definisco l'array delle soluzioni e imposto le condizioni iniziali
+    double Y[neq];
+
+    // setto le condizioni iniziali
+    Y[0] = phi0; // phi(r)
+    Y[1] = s; // dphi/dr
+
+    r = r0; // setto il punto di integrazione iniziale
+
+    // risolvo le equazioni del moto usando RK a 4 step
+    for( int i = 0 ; i < nstep ; i++ ){
+
+        RK4Step(r, Y, RHSFuncPoisson, dr, neq); // risolvo la ODE
+        r += dr;
+
+    }
+
+    // return il residuo (il valore di Y[1] è 1.0 in questo caso)
+    return Y[0] - 1;
+
+}
+
+
+// -------------------- wave.cpp -------------------- //
+
+// definisco il Right-Hand-Side-Function (è problem dependent). 
+// Gli do in input t e il puntatore ad Y e in uscita (tramite il puntatore)
+// mi faccio dare R
+void RHSFuncWave(double x, double *Y, double *R){
+
+    // nota che il terzo elemento di Y ( Y[2] ) è k
+
+    R[0] = Y[1];
+    R[1] = - Y[2] * Y[2] * Y[0];
+    R[2] = 0; // dk/dx = 0
+
+}
+
+// creo la funzione residuo
+// sarà la funzione che diamo alla funzione per la ricerca degli zeri
+// è problem dependent.
+// gli do in input la guess sulla derivata
+double ResidualWave(double k){
+
+    // ricopio esattamente il main precedente per trovare la soluzione con s
+    int neq = 3; // numero equazioni
+    // mettiamo come terzo elemento di Y il coefficiente k
+    int nstep = 100; // numero punti
+
+    double x; // variabile
+    double x0 = 0.0; // variabile iniziale
+    double xf = 1.0; // variabile finale
+    double dx = fabs(xf - x0) / nstep; // step fisso
+
+    // setto la condizioni iniziali
+    double phi0 = 0.0;
+    double phif = 0.0;
+
+    // variabile dello shooting
+    double s = 1.0; // dy/dx |0 = 1
+
+    // definisco l'array delle soluzioni e imposto le condizioni iniziali
+    double Y[neq];
+    Y[0] = phi0;
+    Y[1] = s;
+    Y[2] = k;
+
+    x = x0; // setto il punto di integrazione iniziale
+
+    // risolvo le equazioni del moto usando RK a 4 step
+    for( int i = 0 ; i < nstep ; i++ ){
+
+        RK4Step(x, Y, RHSFuncWave, dx, neq); // risolvo la ODE
+        x += dx;
+
+    }
+
+    // return il residuo (il valore di Y[1] è 1.0 in questo caso)
+    return Y[0] - 0.0;
+
+}
+
+
+// -------------------- qho.cpp --------------------- //
+
+// definisco il Right-Hand-Side-Function (è problem dependent). 
+// Gli do in input t e il puntatore ad Y e in uscita (tramite il puntatore)
+// mi faccio dare R
+void RHSFuncQho(double x, double *Y, double *R){
+
+    // nota che il terzo elemento di Y ( Y[2] ) è k = -2*(E - V(x))
+    // V(x) = x*x/2
+
+    R[0] = Y[1];
+    R[1] = -2 * ( g_E - 0.5*x*x ) * Y[0];
+
+}
+
+// creo la funzione residuo
+// sarà la funzione che diamo alla funzione per la ricerca degli zeri
+// è problem dependent.
+// gli do in input la guess sulla derivata
+double ResidualQho(double E){
+
+    // ricopio esattamente il main precedente per trovare la soluzione
+    int neq = 2; // numero equazioni
+    int nstep = 1200; // numero punti
+    int nstepL = 700 , nstepR = nstep - nstepL; // punti nei due intervalli
+
+    double x; // variabile
+    double x0 = -10.0; // variabile iniziale
+    double xf = 10.0; // variabile finale
+
+    double xm = 0.3; // matching point (arbitrario)
+
+    double dx0 = fabs( xf - x0 )/(double)nstep;
+    double dx; // incremento
+
+    x = x0; // setto il punto di integrazione iniziale
+
+    g_E = E; // setto l'autovalore dell'energia
+
+    // definisco l'array delle soluzioni e imposto le condizioni iniziali
+    double YF[neq] , YB[neq]; // Forward e Backward
+    YF[0] = YB[0] = exp( -x*x*0.5 );
+    YF[1] = -x*YF[0];
+    YB[1] = -x*YB[0];
+
+    // definisco la varabile di controllo per rimanere nell'intervallo
+    int controllo = 1;
+
+    // risolvo le equazioni del moto usando RK a 4 step (Forward)
+    while( controllo ){
+
+        dx = dx0;
+
+        if( x+dx > xm ){
+
+            dx = xm - x;
+            controllo = 0;
+
+        }
+
+        RK4Step(x, YF, RHSFuncQho, dx, neq); // risolvo la ODE
+        
+        x += dx;
+
+    }
+
+    // salvo il matchingpoint di sinistra
+    double xml = x;
+
+    // Integrazione Backward
+    controllo = 1;
+    x = xf; // setto il punto di integrazione iniziale
+
+    // risolvo le equazioni del moto usando RK a 4 step (Forward)
+    while( controllo ){
+
+        dx = -dx0;
+
+        if( dx < xm - x ){
+
+            dx = xm - x;
+            controllo = 0;
+
+        }
+
+        RK4Step(x, YB, RHSFuncQho, dx, neq); // risolvo la ODE
+        
+        x += dx;
+
+    }
+
+    // controllo se i due matching point coincidono
+    double xmr = x;
+
+    if ( fabs(xmr - xml) > 1.e-14 ){
+
+        cout << "error at matching point." << endl;
+        cout << "xm(L) = " << xml << "; xm(R) = " << xmr << endl;
+
+    }
+
+    // calcolo del residuo
+    double fl = YF[1]*YB[0];
+    double fr = YF[0]*YB[1];
+    double R = (fl-fr)/sqrt( fl*fl + fr*fr ) + 1.e-7;
+
+    // return il residuo
+    return R;
+
+}
+
+
+
+//-------------------------- 9-MultiArray ---------------------------------//
+
+
+// ------------------- matrix.cpp -------------------- //
+// ----------------- gauss_elim.cpp ------------------ //
+// ---------------- gauss_elim2.cpp ------------------ //
+// ------------------ tridiag.cpp -------------------- //
+// --------------------- bvp.cpp --------------------- //
+
+
+
+
+//----------------------------- 10-PDE ------------------------------------//
+
+
+// ------------------ elliptic.cpp ------------------- //
+// ------------------- example.cpp ------------------- //
+// ------------------ example.cpp -------------------- //
