@@ -14,6 +14,8 @@ using namespace std;
 #define NMAX_EQ 64 // numero massimo di eq (lo inseriamo per sicurezza e per non
 // lasciare array con dimensione variabile)
 #define OMEGA 1.0 // pulsazione del problema (vedi harmonic.cpp Ch07)
+#define Nrow 4 // (vedi sessione 0 Ch09)
+#define Ncol 4
 
 // definizione di variabili globali. UTILIZZARE SOLO SE NECESSARIE
 int g_LegendreN; // variabile che serve nel capitolo 5 per i polinomi di Legendre
@@ -2053,13 +2055,282 @@ double ResidualQho(double E){
 
 //-------------------------- 9-MultiArray ---------------------------------//
 
+// implemento la funzione per stampare una matrice (dinamica) di n dimensioni
+void PrintMatrix(double **A, int n){
+
+    cout << fixed << setprecision(4);
+
+    for( int i = 0 ; i < n ; i++ ){
+
+        for(int j = 0 ; j < n ; j++ ){
+
+            cout << setw(10) << right << A[i][j] << " ";
+
+        }
+
+        cout << endl;
+
+    }
+
+}
+
+// implemento la funzione per stampare un vettore (dinamico) di n dimensioni
+void PrintVector(double *v, int n){
+
+    cout << fixed << setprecision(4);
+
+    for(int j = 0 ; j < n ; j++ ){
+
+        cout << setw(10) << right << v[j] << endl;
+        
+    }
+
+}
+
+// implemento la funzione per la moltiplicazione matrice vettore in modo
+// DINAMICO.
+// do in input la matrice, il vettore, il vettore prodotto, e il numero di 
+// righe e colonne
+void MVmult_dinamic(double **Ad, double *bd, double *Abd, int nrow, int ncol){
+
+    for( int i = 0 ; i < nrow ; i++ ){
+
+        Abd[i] = 0.0; // inizializzo il valore di Ab
+
+        for( int j = 0 ; j < ncol ; j++ ){
+
+            Abd[i] += Ad[i][j] * bd[j];
+
+        }
+
+    }
+    
+}
+
+// implemento la funzione di eliminazione di Gauss.
+// gli do in input la matrice da rendere diagonale superiore, il vettore di
+// termini noti, il vettore delle incognite e la dimensione
+void GaussElimination(double **A, double *b, double *x, int n){
+
+    double tmp; // variabile che mi servirà per la risoluzione
+    double g; // varaibile per invertire
+
+    for( int k = 0 ; k < n-1 ; k++ ){   // loop over the Gk's
+
+        for( int i = k+1 ; i < n ; i++ ){   // loop sulle righe
+
+            g = A[i][k] / A[k][k];
+
+            for( int j = k+1 ; j < n ; j++ ){
+
+                A[i][j] -= g*A[k][j];
+
+            }
+
+            A[i][k] = 0.0;
+            b[i] -= g*b[k];
+
+        }
+
+    }
+
+    // risoluzione sistema (back-substitution)
+    // vedi la formula nelle slide
+    for( int i = n-1 ; i >= 0 ; i-- ){
+
+        tmp = b[i];
+
+        for( int j = n-1 ; j > i ; j-- ){
+
+            tmp -= x[j] * A[i][j];
+
+        }
+
+        x[i] = tmp/A[i][i];
+
+    }
+    
+}
+
+// implemento la funzione per scambiare righe
+// gli do in input la matrice, il vettore, le due righe da scambiare e la
+// dimensione
+void SwapRows(double **A, double *b, int i1, int i2, int n){
+
+    double tmp; // variabile temporanea per memorizzare gli elementi
+
+    // scambio elementi della matrice
+    for( int j = 0 ; j < n ; j++ ){
+
+        tmp = A[i1][j];
+
+        A[i1][j] = A[i2][j];
+
+        A[i2][j] = tmp;
+
+    }
+
+    // scambio elementi del vettore
+    tmp = b[i1];
+
+    b[i1] = b[i2];
+
+    b[i2] = tmp;
+    
+}
+
+// implemento la funzione pivot (evoluzione della GaussElimination)
+// gli do in input la matrice, il vettore dei termini noti, il vettore
+// soluzione e la dimensione
+void Pivot(double **A, double *b, double *x, int n){
+
+    double tmp , g; // variabili temporanea e per eseguire l'eliminazione
+    // variabili per salvare elementi di matrice (diagonale e non)
+    double Akk , Aik;
+    int m;
+
+    for( int k = 0 ; k < n-1 ; k++ ){   // loop over the Gk's
+
+        Akk = fabs( A[k][k] ); // salvo l'elemento diagonale
+        m = k; // salvo l'indice
+
+        // ricerco la riga con |A_{ik}| massimo (e maggiore) di |A_{kk}|
+        for( int i = k+1 ; i < n ; i++ ){ // loop sulle righe
+
+            Aik = fabs( A[i][k] ); // salvo l'elemento
+
+            if( Aik > Akk ){
+
+                Akk = Aik;
+                m = i;
+
+            }
+
+        }
+
+        // scambio le righe solo se i due elementi non coincidono
+        if( k != m ){
+
+            SwapRows(A, b, m, k, n);
+        
+        }
+
+        // implemento l'eliminazione gaussiana (uguale all'altra funzione)
+        for( int i = k+1 ; i < n ; i++ ){   // loop sulle righe
+
+            g = A[i][k] / A[k][k];
+
+            for( int j = k+1 ; j < n ; j++ ){
+
+                A[i][j] -= g*A[k][j];
+
+            }
+
+            A[i][k] = 0.0;
+            b[i] -= g*b[k];
+
+        }
+
+    }
+
+    // risoluzione sistema (back-substitution)
+    // vedi la formula nelle slide
+    for( int i = n-1 ; i >= 0 ; i-- ){
+
+        tmp = b[i];
+
+        for( int j = n-1 ; j > i ; j-- ){
+
+            tmp -= x[j] * A[i][j];
+
+        }
+
+        x[i] = tmp/A[i][i];
+
+    }
+        
+}
+
 
 // ------------------- matrix.cpp -------------------- //
-// ----------------- gauss_elim.cpp ------------------ //
-// ---------------- gauss_elim2.cpp ------------------ //
-// ------------------ tridiag.cpp -------------------- //
-// --------------------- bvp.cpp --------------------- //
+// altre funzioni generiche scritte sopra
 
+// implemento la funzione per la moltiplicazione matrice vettore in modo
+// STATICO.
+// do in input la matrice, il vettore, il vettore prodotto, e il numero di 
+// righe e colonne
+void MVmult_static(double As[Nrow][Ncol], double* bs, double* Abs, 
+                   int nrow, int ncol){
+    
+    for( int i = 0 ; i < nrow ; i++ ){
+
+        Abs[i] = 0.0; // inizializzo il valore di Ab
+
+        for( int j = 0 ; j < ncol ; j++ ){
+
+            Abs[i] += As[i][j] * bs[j];
+
+        }
+
+    }
+
+}
+
+
+// ----------------- gauss_elim.cpp ------------------ //
+// l'unica funzione nuova è GaussElimination(...)
+
+// ---------------- gauss_pivot.cpp ------------------ //
+// funzione SwapRows(...) e Pivot(...)
+
+// ------------------ tridiag.cpp -------------------- //
+
+// Implemento la funzione di TridiagSolver
+// gli do in input i vettori contenenti rispettivamente: gli elementi sotto
+// la diagonale, i termini noti, le soluzioni, r, gli elementi sopra la diagonale
+// e la dimensione
+void TridiagSolver(double *a, double *b, double *x, double *r, double *c, int n){
+
+    // definisco i vettori h e p
+    double *h = new double [n];
+    double *p = new double [n];
+
+    // calcolo gli elementi h[n] e p[n] per il metodo Tridiag
+    // separo i termini patologici
+    h[0] = c[0]/b[0];
+    p[0] = r[0]/b[0];
+
+    for( int i = 1 ; i < n ; i++ ){
+
+        h[i] = c[i] / ( b[i] - a[i]*h[i-1] );
+
+        p[i] = ( r[i] - a[i]*p[i-1] ) / ( b[i] - a[i]*h[i-1] );
+
+    }
+
+    // applico il metodo di risoluzione
+    x[n-1] = p[n-1]; // termine patologico non avendo definito x[n+1]
+    
+    // applichiamo back-substitution
+    for( int i = n-1 ; i >= 0 ; i-- ){
+
+        x[i] = p[i] - h[i]*x[i+1];
+
+    }
+
+    // pulisco
+    delete[] h;
+    delete[] p;
+
+}
+
+// --------------------- bvp.cpp --------------------- //
+// definisco la RHS function della ODE
+double RHSFuncBVP(double x){
+
+    return 1.;
+
+}
 
 
 

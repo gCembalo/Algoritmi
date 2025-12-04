@@ -16,6 +16,9 @@
 
 using namespace std;
 
+#define Nrow 4 // (vedi sessione 0 Ch09)
+#define Ncol 4
+
 // Dichiarazione delle funzioni in base alla lezione. Potrebbero esserci 
 // funzioni definite più volte, quindi è sempre meglio controllare, non solo 
 // il funzionamento, ma anche la sintassi con cui le si chiama.
@@ -145,7 +148,7 @@ double der4th(double (*)(double), double, double, double, double, double);
 
 // trajectory.cpp
 
-// le funzioni derivate (derFD , derBD , derCD , der4th) sono uguali a "derivative.cpp"
+// le altre funzioni sono uguali a "derivative.cpp"
 double position(double);
 double velocity(double);
 double SecondDerivative(double (*)(double), double, double, double, double);
@@ -204,11 +207,25 @@ double ResidualQho(double);
 
 //--------------------------- 9-MultiArray ----------------------------------//
 
+void PrintMatrix(double **, int);
+void PrintVector(double *, int);
+void MVmult_dinamic(double **, double *, double *, int, int);
+void GaussElimination(double **, double *, double *, int);
+void SwapRows(double **, double *, int, int, int);
+void Pivot(double **, double *, double *, int);
+
 // matrix.cpp
+void MVmult_static(double [Nrow][Ncol], double *, double *, int, int);
+
 // gauss_elim.cpp
-// gauss_elim2.cpp
+
+// gauss_pivot.cpp
+
 // tridiag.cpp
+void TridiagSolver(double *, double *, double *, double *, double *, int);
+
 // bvp.cpp
+double RHSFuncBVP(double);
 
 
 
