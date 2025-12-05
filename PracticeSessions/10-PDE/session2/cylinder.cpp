@@ -1,15 +1,7 @@
-// solve the Poisson equation
+// Compute the potential of an infinitely long charged cylinder by solving the Poisson equation
 //
-//      \pdv[2]{\phi}{x} + \pdv{\phi}{y} - S(x,y) = 0
-//
-// on the unit square 0 ≤ x,y ≤ 1with S = const. and b.c. given by 
-// the exact solution
-// \phi(x,y) = e^{-\pi x}\sin{(-\pi y)} + S/4 (x^2 + y^2)
-//
-// Set NX = NY = 32and try S = 0and then S = 2using Jacobi, Gauss-Seidel and
-// SOR. Compare the number of iterations necessary to achieve convergence,
-//  using the residual and a tolerance of 10-7. Results are given by the
-// following table.
+//          \nabla^2 \phi = -\rho
+// (see slide)
 //
 
 #include <iostream>
@@ -19,7 +11,7 @@
 
 using namespace std;
 
-double SolElliptic(double, double, double);
+double SolCylinder(double, double, double);
 void Boundary(double **, double *, double *, int, double);
 int JacobiMethod(double **, double **, double *, double *, double, double, 
                     double, int, int);
@@ -30,164 +22,7 @@ int SORMethod(double **, double **, double *, double *, double, double,
 
 int main(){
 
-    ofstream fdata;
-    fdata.open("elliptic.dat"); // file per le soluzioni
-
-    cout << setiosflags ( ios::scientific );
-    cout << setprecision ( 2 );
-
-    fdata << setiosflags ( ios::scientific );
-    fdata << setprecision ( 10 );
-
-    int nx , ny , n = 32; // numero di nodi della griglia ( nx = ny )
-    nx = ny = n = 32;
-
-    double tol = 1.e-7; // tolleranza
-
-    // definisco le variabili per le iterazioni
-    int iterJ , iterGS , iterSOR;
-
-    double S; // Sorgente
-    // dopo imposto, prima di ogni metodo, gli specifici valori
-
-    // definisco gli array 2d
-    double **phi0 = new double *[nx];
-    double **phi1 = new double *[nx];
-
-    phi0[0] = new double [nx*ny];
-    phi1[0] = new double [nx*ny];
-    
-    for( int i=1 ; i<nx ; i++ ){
-
-        phi0[i] = phi0[i-1] + ny;
-        phi1[i] = phi1[i-1] + ny;
-
-    }
-
-    // definisco il dominio di integrazione
-    double xi = 0.0 , yi = 0.0;
-    double xf = 1.0 , yf = 1.0;
-    double x[nx], y[ny];
-
-    double h = fabs(xf-xi)/(double)(nx-1); // intervallo
-
-    // inizializzo la griglia
-    for( int i = 0 ; i < nx ; i++ ){
-        x[i] = xi + i*h;
-    }
-    for( int j = 0 ; j < ny ; j++ ){
-        y[j] = yi + j*h;
-    }
-
-    // costruisco un ciclo in cui calcolo per i due valori di S il metodo di J
-    for( int k = 0 ; k < 2 ; k++ ){
-
-        for( int i = 1 ; i < nx-1 ; i++ ){
-            
-            // inizializzo i vettori
-            for( int j = 1 ; j < ny-1 ; j++ ){
-
-                phi0[i][j] = phi1[i][j] = 0.;
-
-            }
-
-        }
-        
-        S = (double)k*2; // definisco il valore della sorgente
-
-        // calcolo le iterazioni invocando il metodo
-        iterJ = 0;
-        iterJ = JacobiMethod(phi0, phi1, x, y, S, h, tol, n, n);
-        
-        for( int i = 0 ; i < n ; i++ ){
-
-            for( int j = 0 ; j < n ; j++ ){
-
-                fdata << x[i] << " " << y[j] << " " << phi1[i][j] << endl;
-
-            }
-            
-            fdata << endl << endl;
-
-        }
-        
-        cout << "S = " << S << "\t Jacobi: \t k = " << iterJ << endl;
-
-    }
-
-    // costruisco un ciclo in cui calcolo per i due valori di S il metodo di GS
-    for( int k = 0 ; k < 2 ; k++ ){
-
-        for( int i = 1 ; i < nx-1 ; i++ ){
-            
-            // inizializzo i vettori
-            for( int j = 1 ; j < ny-1 ; j++ ){
-
-                phi0[i][j] = phi1[i][j] = 0.;
-
-            }
-
-        }
-        
-        S = (double)k*2; // definisco il valore della sorgente
-
-        // calcolo le iterazioni invocando il metodo
-        iterGS = 0;
-        iterGS = GaussSeidelMethod(phi0, phi1, x, y, S, h, tol, n, n);
-        
-        for( int i = 0 ; i < n ; i++ ){
-
-            for( int j = 0 ; j < n ; j++ ){
-
-                fdata << x[i] << " " << y[j] << " " << phi1[i][j] << endl;
-
-            }
-            
-            fdata << endl << endl;
-
-        }
-        
-        cout << "S = " << S << "\t GaussSeidel: \t k = " << iterGS << endl;
-
-    }
-
-    // costruisco un ciclo in cui calcolo per i due valori di S il metodo di SOR
-    for( int k = 0 ; k < 2 ; k++ ){
-
-        for( int i = 1 ; i < nx-1 ; i++ ){
-            
-            // inizializzo i vettori
-            for( int j = 1 ; j < ny-1 ; j++ ){
-
-                phi0[i][j] = phi1[i][j] = 0.;
-
-            }
-
-        }
-        
-        S = (double)k*2; // definisco il valore della sorgente
-
-        // calcolo le iterazioni invocando il metodo
-        iterSOR = 0;
-        iterSOR = SORMethod(phi0, phi1, x, y, S, h, tol, n, n);
-        
-        for( int i = 0 ; i < n ; i++ ){
-
-            for( int j = 0 ; j < n ; j++ ){
-
-                fdata << x[i] << " " << y[j] << " " << phi1[i][j] << endl;
-
-            }
-            
-            fdata << endl << endl;
-
-        }
-        
-        cout << "S = " << S << "\t SOR: \t k = " << iterSOR << endl;
-
-    }
-
-    fdata.close();
+    // Implementazione main()
 
     return 0;
 
@@ -197,29 +32,38 @@ int main(){
 // ------------------------ Funzioni implementate ------------------------ //
 
 // Implemento la funzione soluzione
-double SolElliptic(double x, double y, double S){
+double SolCylinder(double x, double y, double a){
 
-    return exp( -M_PI*x )*sin( -M_PI*y ) + S*( x*x + y*y )*0.25;
+    double rho0 = 1.0;
+
+    double r = sqrt( x*x + y*y ); // coordinata radiale
+
+    if( r <= a ){
+        return -rho0*r*r*0.25;
+    }
+    if( r > a){
+        return -rho0*a*a*0.5*( log(r/a) + 0.5 );
+    }
 
 }
 
 // Implemento una funzione che mi fissa le condizioni al contorno (alla griglia)
 // Gli do in input il vettore soluzione, gli array x e y della griglia, il
 // numero di punti ed il valore di S
-void Boundary(double **phi, double *x, double *y, int nx, int ny, double S){
+void Boundary(double **phi, double *x, double *y, int nx, int ny, double a){
 
     // Costruisco il ciclo per fissare le condizioni (usando la soluzione)
 
     // bordo sinistro e destro
     for (int i = 0; i < nx; i++) {
-        phi[i][0]     = SolElliptic(x[i], y[0], S);
-        phi[i][ny-1]  = SolElliptic(x[i], y[ny-1], S);
+        phi[i][0]     = SolCylinder(x[i], y[0], a);
+        phi[i][ny-1]  = SolCylinder(x[i], y[ny-1], a);
     }
 
     // bordo inferiore e superiore
     for (int j = 0; j < ny; j++) {
-        phi[0][j]     = SolElliptic(x[0], y[j], S);
-        phi[nx-1][j]  = SolElliptic(x[nx-1], y[j], S);
+        phi[0][j]     = SolCylinder(x[0], y[j], a);
+        phi[nx-1][j]  = SolCylinder(x[nx-1], y[j], a);
     }
 
 }
