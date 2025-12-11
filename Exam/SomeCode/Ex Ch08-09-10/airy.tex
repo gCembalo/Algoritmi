@@ -1,0 +1,59 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{anysize}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\definecolor{Blue}{rgb}{0.2,0.2,0.9}
+\definecolor{Green}{rgb}{0,0.6,0}
+\definecolor{Gray}{rgb}{0.5,0.5,0.5}
+\definecolor{Purple}{rgb}{0.58,0,0.82}
+\definecolor{background}{rgb}{0.98,0.98,0.95}
+
+\lstdefinestyle{mystyle}{
+backgroundcolor=\color{background},
+commentstyle=\color{Green},
+keywordstyle=\color{Blue},
+numberstyle=\tiny\color{Gray},
+stringstyle=\color{Purple},
+basicstyle=\ttfamily\footnotesize,
+breakatwhitespace=false,
+breaklines=true,
+captionpos=b,
+keepspaces=true,
+numbers=left,
+numbersep=5pt,
+showspaces=false,
+showstringspaces=false,
+showtabs=false,
+tabsize=2
+}
+\lstset{style=mystyle}
+
+\title{Classwork: Airy}
+\author{Student: Gabriele Cembalo}
+\date{\today}
+
+%%%%%% DOCUMENT BEGINS HERE %%%%%%
+
+\begin{document}
+
+\maketitle
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{airy.png}
+    \caption{}
+    %\label{fig:single}
+\end{figure}
+%
+
+%Insert your code using the \texttt{lstlisting} environment included at the
+%beginning of this document.
+%Example:
+\lstinputlisting[language=C++]{airy.cpp}
+
+\end{document}

@@ -1,3 +1,10 @@
+// voto: 29
+// Errori: No implementazione,
+//         Codice oltre la colonna 80
+//         Utilizzo variabili globali
+
+
+
 // Name: Gabriele, Cembalo
 // Date: 30 Oct 2025
 //

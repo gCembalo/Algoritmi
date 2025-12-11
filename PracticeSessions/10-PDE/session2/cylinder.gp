@@ -25,7 +25,7 @@ set palette defined
 set palette model HSV defined ( 0 0 1 1, 1 1 1 1)
 
 set tics font ",14"
-set title "Elliptic (S=2)"
+set title "Cylinder"
 set xlabel "x"  font ",14"
 set ylabel "y"  font ",14"
 
@@ -34,4 +34,4 @@ set rmargin at screen 0.82
 set bmargin at screen 0.12
 set tmargin at screen 0.95
 
-splot "elliptic.dat" u 1:2:3
+splot "cylinder.dat" u 1:2:3

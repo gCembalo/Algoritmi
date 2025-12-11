@@ -1,15 +1,11 @@
-// solve the Poisson equation
-//
-//      \pdv[2]{\phi}{x} + \pdv{\phi}{y} - S(x,y) = 0
-//
-// on the unit square 0 ≤ x,y ≤ 1with S = const. and b.c. given by 
-// the exact solution
-// \phi(x,y) = e^{-\pi x}\sin{(-\pi y)} + S/4 (x^2 + y^2)
-//
-// Set NX = NY = 32and try S = 0and then S = 2using Jacobi, Gauss-Seidel and
-// SOR. Compare the number of iterations necessary to achieve convergence,
-//  using the residual and a tolerance of 10-7. Results are given by the
-// following table.
+// Find the steady-state temperature distribution of a rectangular plate
+// 0 ≤x ≤ 2, 0 ≤ y ≤1, insulated at x=0, with temperature fixed to 0 and
+// to 2-x on the lower and upper sides and constant heat flux = 3 at
+// the right side. For constant thermal conductivity, this entails the
+// solution of the Laplace equation:
+//          \nabla^2 \phi = 0
+// with Neumann boundary conditions.
+// (see slide)
 //
 
 #include <iostream>
@@ -17,13 +13,11 @@
 #include <cmath>
 #include <fstream>
 
-double N_S = 2; // Variabile che utilizzo per selezionare il valore della sorgente
-
 using namespace std;
 
 double Source(double, double);
-double SolElliptic(double, double, double);
-void Boundary(double **, double *, double *, int);
+double SolCylinder(double, double, double);
+void Boundary(double **, double *, double *, int, int);
 int JacobiMethod(double **, double **, double *, double *, double, double, 
                     double, int, int);
 int GaussSeidelMethod(double **, double *, double *, double, double, 
@@ -34,7 +28,7 @@ int SORMethod(double **, double *, double *, double, double,
 int main(){
 
     ofstream fdata;
-    fdata.open("elliptic.dat"); // file per le soluzioni
+    fdata.open("conductivity.dat"); // file per le soluzioni
 
     cout << setiosflags ( ios::scientific );
     cout << setprecision ( 2 );
@@ -42,16 +36,19 @@ int main(){
     fdata << setiosflags ( ios::scientific );
     fdata << setprecision ( 10 );
 
-    int nx , ny , n = 32; // numero di nodi della griglia ( nx = ny )
-    nx = ny = n;
+    int nx , ny; // numero di nodi della griglia
+    nx = 129;
+    ny = 65;
 
     double tol = 1.e-7; // tolleranza
 
     // definisco le variabili per le iterazioni
     int iterJ , iterGS , iterSOR;
 
-    double S; // Sorgente
-    // dopo imposto, prima di ogni metodo, gli specifici valori
+    // Le condizioni sulla sorgente le metto con una funzione apposita
+    double S = 0.0; // Sorgente (inizializzata)
+    double r; // variabile raggio
+    double a = 0.1;
 
     // definisco gli array 2d
     double **phi0 = new double *[nx];
@@ -69,7 +66,7 @@ int main(){
 
     // definisco il dominio di integrazione
     double xi = 0.0 , yi = 0.0;
-    double xf = 1.0 , yf = 1.0;
+    double xf = 2.0 , yf = 1.0;
     double x[nx], y[ny];
 
     double h = fabs(xf-xi)/(double)(nx-1); // intervallo
@@ -77,10 +74,12 @@ int main(){
     // inizializzo la griglia
     for( int i = 0 ; i < nx ; i++ ){
         x[i] = xi + i*h;
-        y[i] = yi + i*h;
+    }
+    for( int j = 0 ; j < ny ; j++ ){
+        y[j] = yi + j*h;
     }
 
-    // costruisco un ciclo in cui calcolo per i due valori di S il metodo di J
+    // inizializzo le soluzioni
     for( int i = 1 ; i < nx-1 ; i++ ){
             
         // inizializzo i vettori
@@ -94,11 +93,11 @@ int main(){
 
     // calcolo le iterazioni invocando il metodo
     iterJ = 0;
-    iterJ = JacobiMethod(phi0, phi1, x, y, S, h, tol, n, n);
+    iterJ = JacobiMethod(phi0, phi1, x, y, S, h, tol, nx, ny);
         
-    for( int i = 0 ; i < n ; i++ ){
+    for( int i = 0 ; i < nx ; i++ ){
 
-        for( int j = 0 ; j < n ; j++ ){
+        for( int j = 0 ; j < ny ; j++ ){
 
             fdata << x[i] << " " << y[j] << " " << phi1[i][j] << endl;
 
@@ -107,10 +106,10 @@ int main(){
         fdata << endl;
 
     }
-        
-    cout << "S = " << S << "\t Jacobi: \t k = " << iterJ << endl;
 
-    // costruisco un ciclo in cui calcolo per i due valori di S il metodo di GS
+    cout << "Jacobi: \t k = " << iterJ << endl;
+
+    // costruisco un ciclo in cui uso il metodo di GS
     for( int i = 1 ; i < nx-1 ; i++ ){
             
         // inizializzo i vettori
@@ -124,11 +123,11 @@ int main(){
 
     // calcolo le iterazioni invocando il metodo
     iterGS = 0;
-    iterGS = GaussSeidelMethod(phi1, x, y, S, h, tol, n, n);
+    iterGS = GaussSeidelMethod(phi1, x, y, S, h, tol, nx, ny);
         
-    for( int i = 0 ; i < n ; i++ ){
+    for( int i = 0 ; i < nx ; i++ ){
 
-        for( int j = 0 ; j < n ; j++ ){
+        for( int j = 0 ; j < ny ; j++ ){
 
             fdata << x[i] << " " << y[j] << " " << phi1[i][j] << endl;
 
@@ -137,10 +136,10 @@ int main(){
         fdata << endl;
 
     }
-        
-    cout << "S = " << S << "\t GaussSeidel: \t k = " << iterGS << endl;
 
-    // costruisco un ciclo in cui calcolo per i due valori di S il metodo di SOR
+    cout << "Gauss Seidel: \t k = " << iterGS << endl;
+
+    // costruisco un ciclo in cui uso il metodo di SOR
     for( int i = 1 ; i < nx-1 ; i++ ){
             
         // inizializzo i vettori
@@ -154,11 +153,11 @@ int main(){
 
     // calcolo le iterazioni invocando il metodo
     iterSOR = 0;
-    iterSOR = SORMethod(phi1, x, y, S, h, tol, n, n);
+    iterSOR = SORMethod(phi1, x, y, S, h, tol, nx, ny);
         
-    for( int i = 0 ; i < n ; i++ ){
+    for( int i = 0 ; i < nx ; i++ ){
 
-        for( int j = 0 ; j < n ; j++ ){
+        for( int j = 0 ; j < ny ; j++ ){
 
             fdata << x[i] << " " << y[j] << " " << phi1[i][j] << endl;
 
@@ -167,11 +166,13 @@ int main(){
         fdata << endl;
 
     }
-        
-    cout << "S = " << S << "\t SOR: \t k = " << iterSOR << endl;
+
+    cout << "SOR: \t k = " << iterSOR << endl;
 
     fdata.close();
 
+    delete[] phi0[0];
+    delete[] phi1[0];
     delete[] phi0;
     delete[] phi1;
 
@@ -181,25 +182,30 @@ int main(){
 
 
 // ------------------------ Funzioni implementate ------------------------ //
-
 // Implemento la funzione sorgente
 double Source(double x, double y){
-
-    if( N_S == 0 ){
-        return 0.0;
-    }
-    if( N_S == 2 ){
-        return 2.0;
-    }
 
     return 0.0;
 
 }
 
-// Implemento la funzione soluzione
-double SolElliptic(double x, double y, double S){
 
-    return exp( -M_PI*x )*sin( -M_PI*y ) + S*( x*x + y*y )*0.25;
+// Implemento la funzione soluzione
+double SolCylinder(double x, double y){
+
+    double rho0 = 1.0;
+    double a = 0.1;
+
+    double r = sqrt( x*x + y*y ); // coordinata radiale
+
+    if( r >= 0 && r <= a ){
+        return -rho0*r*r*0.25;
+    }
+    if( r > a){
+        return -rho0*a*a*0.5*( log(r/a) + 0.5 );
+    }
+
+    return 0.0;
 
 }
 
@@ -208,21 +214,46 @@ double SolElliptic(double x, double y, double S){
 // numero di punti
 void Boundary(double **phi, double *x, double *y, int nx, int ny){
 
-    // tanto la sorgente non dipende da x o y, semplicemente la fisso
-    double S = Source(x[0],y[0]);
+    // Costruisco il ciclo per fissare le condizioni
+    double sigma;
+    int i,j;
 
-    // Costruisco il ciclo per fissare le condizioni (usando la soluzione)
+    double dx = x[1] - x[0];
 
-    // bordo sinistro e destro
-    for (int i = 0; i < nx; i++) {
-        phi[i][0]     = SolElliptic(x[i], y[0], S);
-        phi[i][ny-1]  = SolElliptic(x[i], y[ny-1], S);
+    // condizioni bottom: Dirichlet b.c.
+    j = 0;
+    for( i = 0 ; i < nx ; i++ ){
+        phi[i][j] = 0.0;
     }
 
-    // bordo inferiore e superiore
-    for (int j = 0; j < ny; j++) {
-        phi[0][j]     = SolElliptic(x[0], y[j], S);
-        phi[nx-1][j]  = SolElliptic(x[nx-1], y[j], S);
+    // condizioni top: Dirichlet b.c.
+    j = ny - 1;
+    for( i = 0 ; i < nx ; i++ ){
+        phi[i][j] = 2.0 - x[i];
+    }
+
+    // condizioni left: Neumann b.c.
+    sigma = 0.0;
+    i = 0;
+    for( j = 0 ; j < ny ; j++ ){
+
+        //phi[i][j] = phi[i+1][j] - dx*sigma; // primo ordine
+
+        // secondo ordine
+        phi[i][j] = ( -phi[i+2][j] + 4*phi[i+1][j] - 2.0*dx*sigma )/3.0;
+
+    }
+
+    // condizioni right: Neumann b.c.
+    sigma = 3.0;
+    i = nx - 1;
+    for( j = 0 ; j < ny ; j++ ){
+
+        //phi[i][j] = phi[i-1][j] - dx*sigma; // primo ordine
+
+        // secondo ordine
+        phi[i][j] = ( -phi[i-2][j] + 4*phi[i-1][j] - 2.0*dx*sigma )/3.0;
+
     }
 
 }
@@ -236,6 +267,7 @@ int JacobiMethod(double **phi0, double **phi1, double *x, double *y,
                   double S, double h, double tol, int nx, int ny){
 
     double sum; // variabile somma in cui metto la soluzione ad ogni step
+    double diff; // variabile differenza in cui metto la soluzione ad ogni step
 
     double err = 1.e3; // variabile errore che utilizzo per bloccare il ciclo
     double deltax = 0. , deltay = 0. ; // variabili che mi servono per l'errore
@@ -244,7 +276,8 @@ int JacobiMethod(double **phi0, double **phi1, double *x, double *y,
 
     while( err > tol ){
 
-        sum = 0.0; // azzero la variabile
+        //sum = 0.0; // azzero la variabile
+        diff = 0.0;
 
         // setto le condizioni al bordo
         Boundary(phi0, x, y, nx, ny);
@@ -265,6 +298,8 @@ int JacobiMethod(double **phi0, double **phi1, double *x, double *y,
         }
 
         // calcolo l'errore
+        err = 0.0;
+
         Boundary(phi1, x, y, nx, ny);
         for( int i = 1 ; i < nx-1 ; i++ ){
 
@@ -272,16 +307,19 @@ int JacobiMethod(double **phi0, double **phi1, double *x, double *y,
 
                 S = Source(x[i], y[j]);
 
-                deltax = phi1[i+1][j] - 2.0*phi1[i][j] + phi1[i-1][j];
-                deltay = phi1[i][j+1] - 2.0*phi1[i][j] + phi1[i][j-1];
+                diff = fabs( ( phi1[i][j] - phi0[i][j] ) * h * h );
 
-                sum += fabs( deltax + deltay - h*h*S );
+                //deltax = phi1[i+1][j] - 2.0*phi1[i][j] + phi1[i-1][j];
+                //deltay = phi1[i][j+1] - 2.0*phi1[i][j] + phi1[i][j-1];
+                //sum += fabs( deltax + deltay - h*h*S );
+
+                err += diff;
 
             }
 
         }
 
-        err = sum;
+        //err = sum;
 
         iter += 1;
 
@@ -310,7 +348,17 @@ int JacobiMethod(double **phi0, double **phi1, double *x, double *y,
 int GaussSeidelMethod(double **phi, double *x, double *y,
                       double S, double h, double tol, int nx, int ny){
 
+    double phi0[nx][ny]; // matrice soluzioni step precedente (serve per l'errore)
+    // inizializzo le soluzioni
+    for( int i = 1 ; i < nx-1 ; i++ ){
+        // inizializzo i vettori
+        for( int j = 1 ; j < ny-1 ; j++ ){
+            phi0[i][j] = 0.0;
+        }
+    }
+
     double sum; // variabile somma in cui metto la soluzione ad ogni step
+    double diff; // variabile differenza in cui metto la soluzione ad ogni step
 
     double err = 1.e3; // variabile errore che utilizzo per bloccare il ciclo
     double deltax = 0. , deltay = 0. ; // variabili che mi servono per l'errore
@@ -319,7 +367,8 @@ int GaussSeidelMethod(double **phi, double *x, double *y,
 
     while( err > tol ){
 
-        sum = 0.0; // azzero la variabile
+        //sum = 0.0; // azzero la variabile
+        diff = 0.0;
 
         // setto le condizioni al bordo
         Boundary(phi, x, y, nx, ny);
@@ -340,6 +389,8 @@ int GaussSeidelMethod(double **phi, double *x, double *y,
         }
 
         // calcolo l'errore
+        err = 0.0;
+
         Boundary(phi, x, y, nx, ny);
         for( int i = 1 ; i < nx-1 ; i++ ){
 
@@ -347,18 +398,32 @@ int GaussSeidelMethod(double **phi, double *x, double *y,
 
                 S = Source(x[i], y[j]);
 
-                deltax = phi[i+1][j] - 2.0*phi[i][j] + phi[i-1][j];
-                deltay = phi[i][j+1] - 2.0*phi[i][j] + phi[i][j-1];
+                diff = fabs( ( phi[i][j] - phi0[i][j] ) * h * h );
 
-                sum += fabs( deltax + deltay - h*h*S );
+                //deltax = phi1[i+1][j] - 2.0*phi1[i][j] + phi1[i-1][j];
+                //deltay = phi1[i][j+1] - 2.0*phi1[i][j] + phi1[i][j-1];
+                //sum += fabs( deltax + deltay - h*h*S );
+
+                err += diff;
 
             }
 
         }
 
-        err = sum;
+        //err = sum;
 
         iter += 1;
+
+        // copio la soluzione
+        for(int i=0;i<nx;i++){
+
+            for(int j=0;j<ny;j++){
+
+                phi0[i][j] = phi[i][j];
+
+            }
+
+        }
 
     }
 
@@ -374,7 +439,17 @@ int GaussSeidelMethod(double **phi, double *x, double *y,
 int SORMethod(double **phi, double *x, double *y,
               double S, double h, double tol, int nx, int ny){
 
+    double phi0[nx][ny]; // matrice soluzioni step precedente (serve per l'errore)
+    // inizializzo le soluzioni
+    for( int i = 1 ; i < nx-1 ; i++ ){
+        // inizializzo i vettori
+        for( int j = 1 ; j < ny-1 ; j++ ){
+            phi0[i][j] = 0.;
+        }
+    }
+
     double sum; // variabile somma in cui metto la soluzione ad ogni step
+    double diff; // variabile differenza in cui metto la soluzione ad ogni step
 
     double err = 1.e3; // variabile errore che utilizzo per bloccare il ciclo
     double deltax = 0. , deltay = 0. ; // variabili che mi servono per l'errore
@@ -386,7 +461,8 @@ int SORMethod(double **phi, double *x, double *y,
 
     while( err > tol ){
 
-        sum = 0.0; // azzero la variabile
+        //sum = 0.0; // azzero la variabile
+        diff = 0.0;
 
         // setto le condizioni al bordo
         Boundary(phi, x, y, nx, ny);
@@ -408,6 +484,8 @@ int SORMethod(double **phi, double *x, double *y,
         }
 
         // calcolo l'errore
+        err = 0.0;
+
         Boundary(phi, x, y, nx, ny);
         for( int i = 1 ; i < nx-1 ; i++ ){
 
@@ -415,18 +493,32 @@ int SORMethod(double **phi, double *x, double *y,
 
                 S = Source(x[i], y[j]);
 
-                deltax = phi[i+1][j] - 2.0*phi[i][j] + phi[i-1][j];
-                deltay = phi[i][j+1] - 2.0*phi[i][j] + phi[i][j-1];
+                diff = fabs( ( phi[i][j] - phi0[i][j] ) * h * h );
 
-                sum += fabs( deltax + deltay - h*h*S );
+                //deltax = phi1[i+1][j] - 2.0*phi1[i][j] + phi1[i-1][j];
+                //deltay = phi1[i][j+1] - 2.0*phi1[i][j] + phi1[i][j-1];
+                //sum += fabs( deltax + deltay - h*h*S );
+
+                err += diff;
 
             }
 
         }
 
-        err = sum;
+        //err = sum;
 
         iter += 1;
+
+        // copio la soluzione
+        for(int i=0;i<nx;i++){
+
+            for(int j=0;j<ny;j++){
+
+                phi0[i][j] = phi[i][j];
+
+            }
+
+        }
 
     }
 

@@ -231,9 +231,23 @@ double RHSFuncBVP(double);
 
 //--------------------------- 10-PDE ----------------------------------//
 
+int JacobiMethod(double **, double **, double *, double *, double, double, 
+                    double, int, int);
+int GaussSeidelMethod(double **, double *, double *, double, double, 
+                    double, int, int);
+int SORMethod(double **, double *, double *, double, double, 
+                    double, int, int);
+
 // elliptic.cpp
-// example.cpp
-// example.cpp
+// see the file.
+
+// cylinder.cpp
+// see the file.
+
+// conductivity.cpp
+double Source(double, double);
+double SolCylinder(double, double, double);
+void Boundary(double **, double *, double *, int, int);
 
 
 #endif // fine del if della prima riga
