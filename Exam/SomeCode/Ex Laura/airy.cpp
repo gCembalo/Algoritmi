@@ -1,4 +1,53 @@
+////////////////////////////////////////////////////////////////////////////////
 //
+//  SIMULATIONE - 3º TEST DI ALGORITMI
+//
+//  Solve the following equation as a boundary value problem:
+//    dzy/dxz = dy/dx - xy subject to y(x0) = 1, y(xf) = 0,
+//    where x0 = -10, xf = 10.
+//  Solve the problem using two different algorithms:
+//
+//    1. Shooting method, by integrating the previous ODE with the 4th order
+//       Runge-Kutta algorithm and NSTEPS = 800. Use a root-finder of your
+//       choice (xTOL = 1.e-8)
+//
+//    2. Finite difference method, with a grid of (NSTEPS + 1) points 
+//       (inclusive of boundary values). Hint: write the tridiagonal system
+//       resulting from a finite difference discretization of the 2nd 
+//       derivative and obtain the coefficients a[], b[], c[] and r[]
+//
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Possiamo risolvere il problema semplicemente riscrivendo meglio i
+//  coefficienti del metodo trdiagonal. Infatti, nel caso standard,
+//  noi abbiamo da risolvere:
+//      \dv[2]{y}{x} = f(x,y)
+//  discretizziamo la derivata e scriviamo:
+//      ( y_{i+1} - 2*y_{i} + y_{i-1} )/( h*h ) = f(x,y)
+//  a lezione abbiamo visto il caso in cui la funzione f(x,y) non contiene la y,
+//  ma non c'è nessun problema se per caso f(x,y) = x*y , infatti possiamo
+//  scrivere:
+//      y_{i+1} - 2*y_{i} + y_{i-1} = x_{i}*y_{i}*h*h
+//      y_{i+1} - ( 2 +h*h*x_{i} )*y_{i} + y_{i-1} = 0
+//  dunque i nostri coefficienti del metodo tridiagonal saranno:
+//      a = c = 1   ,   b = -2 - h*h*x
+//
+//  Caso identico è quello dell'esercizio proposto, in cui abbiamo da risolvere:
+//      dzy/dxz = dy/dx + xy
+//  possiamo procedere allo stesso modo di prima, ma discretizzando anche la
+//  derivata prima con l'approssimazione del "central difference" (CD),
+//  visto che è la scelta più efficiente:
+//      y_{i+1} - 2*y_{i} + y_{i-1} = h*( y_{i+1} - y_{i-1} )/2 + x_{i}*y_{i}*h*h
+//      ( 1 - h/2 )*y_{i+1} - ( 2 +h*h*x_{i} )*y_{i} + ( 1 + h/2 )*y_{i-1} = 0
+//  dunque i nostri coefficienti sono:
+//      a ( sotto la diagonale y_{i-1} ) = 1 + h/2
+//      b ( diagonale y_{i} ) = -2 - h*h*x_{i}
+//      c ( sopra la diagonale y_{i+1} ) = 1 - h/2
+//
+////////////////////////////////////////////////////////////////////////////////
+
 
 #include <iostream>
 #include <iomanip>
