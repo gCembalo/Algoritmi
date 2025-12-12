@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1765492079.99224 "/Users/gabriele/GitHub/Algoritmi/Exam/SomeCode/Ex Ch08-09-10/airy.tex" "airy.pdf" "airy" 1765492081.65223 0
+["pdflatex"] 1765523819.70652 "/Users/gabriele/GitHub/Algoritmi/Exam/SomeCode/Ex Ch08-09-10/airy.tex" "airy.pdf" "airy" 1765523821.07454 0
   "/Users/gabriele/GitHub/Algoritmi/Exam/SomeCode/Ex Ch08-09-10/airy.tex" 1765488253.97897 1213 a4fe1cba18e76cc63f61f6f15933bcab ""
   "/usr/local/texlive/2025/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
@@ -60,8 +60,8 @@
   "/usr/local/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1743493427 5467155 19efa205003f9ecad95fbbaa6ff24da1 ""
   "/usr/local/texlive/2025/texmf-var/web2c/pdftex/pdflatex.fmt" 1743493289 3345731 1b54ae79c33d7c2bf6de57c6693051df ""
   "/usr/local/texlive/2025/texmf.cnf" 1741450484 577 418a7058ec8e006d8704f60ecd22c938 ""
-  "airy.aux" 1765492081.59865 219 22634960545a99e69bff90757df44372 "pdflatex"
-  "airy.cpp" 1765492079.50304 13194 1083c0ada19c8cbfa5c3b4312b26f093 ""
+  "airy.aux" 1765523821.02007 219 22634960545a99e69bff90757df44372 "pdflatex"
+  "airy.cpp" 1765523819.1669 13279 9a65e888aeccea2b36dd60e2a3c4b9b7 ""
   "airy.png" 1765487931.15691 26289 7500bc9de9cb5c460ea25b2f5c906e7e ""
   "airy.tex" 1765488253.97897 1213 a4fe1cba18e76cc63f61f6f15933bcab ""
   (generated)

@@ -10,7 +10,7 @@ set ylabel "y"  font ",14"
 
 # Settiamo il range dei due assi
 set xrange[-10:10]
-set yrange[-10:10]
+set yrange[-50:200]
 
 # Settiamo la griglia
 set grid

@@ -67,9 +67,9 @@ int main(){
 
         x = xi + i*h;
 
-        a[i] = 1.;
-        b[i] = -2.;
-        c[i] = 1.;
+        a[i] = 1.; // sotto la diagonale (y_{i-1})
+        b[i] = -2.; // diagonale (y_{i})
+        c[i] = 1.; // sopra la diagonale (y_{i+1})
 
         r[i] = h*h*RHSFuncBVP(x);
 

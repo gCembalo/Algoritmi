@@ -125,9 +125,9 @@ int main(){
 
         x = x0 + i*h;
 
-        a[i] = 1. - h*0.5;
-        b[i] = - 2. - h*h*x;
-        c[i] = 1. + h*0.5;
+        a[i] = 1. + h*0.5; // sotto la diagonale (y_{i-1})
+        b[i] = - 2. - h*h*x; // diagonale (y_{i})
+        c[i] = 1. - h*0.5; // sopra la diagonale (y_{i+1})
 
         r[i] = 0.0;
 
