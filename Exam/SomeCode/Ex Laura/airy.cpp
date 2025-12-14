@@ -114,7 +114,7 @@ int main(){
 
     // aggiungo un controllo sullo zero del residuo
     if (status == 0){
-        cout << "y'(-10) = " << szero
+        cout << "\ny'(-10) = " << szero
              << ";   iterazioni = " << l << endl;
     }else{
         cout << "No solution!" << endl;
@@ -183,8 +183,8 @@ int main(){
     }
 
     // metto le condizioni iniziali nel primo e ultimo elemento di r
-    r[1] -= y[0];
-    r[n-2] -= y[n-1];
+    r[1] -= a[1]*y[0];
+    r[n-2] -= c[n-1]*y[n-1];
 
     // richiamo il TridiagSolver per trovare il vettore delle soluzioni
     // schiftiamo di 1 l'argomento, poiche' l'indice 0 lo fissiamo con la

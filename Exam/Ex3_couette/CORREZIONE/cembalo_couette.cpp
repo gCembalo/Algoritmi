@@ -1,17 +1,7 @@
-// Voto: 
-// Errore: Condizioni sul r[] del finite difference:        (line: 163-164)
-//      R[1] -= a[1]*y[0];
-//      R[n-1] -= c[n-1]*y[n-1];
-// Soluzioni:
-//      u'(r_1)               = -8.989901e-01
-//      L1err(Shooting)       = 2.643984e-08
-//      L1err(Finite Diff)    = 3.544725e-05
-//
-
 // Last name: Cembalo
 // u'(r_1)               = -8.9899007e-01
 // L1err(Shooting)       = 2.9317587e-08
-// L1err(Finite Diff)    = 4.4239043e-03
+// L1err(Finite Diff)    = 3.5447246e-05
 //
 
 #include <iostream>
@@ -160,8 +150,8 @@ int main(){
     }
 
     // metto le condizioni iniziali nel primo e ultimo elemento di r
-    R[1] -= y[0];
-    R[n-1] -= y[n-1];
+    R[1] -= a[1]*y[0];
+    R[n-1] -= c[n-1]*y[n-1];
 
     // richiamo il TridiagSolver per trovare il vettore delle soluzioni
     // schiftiamo di 1 l'argomento, poiche' l'indice 0 lo fissiamo con la
