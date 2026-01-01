@@ -1,7 +1,7 @@
 # Algoritmi
 Repository for the MSc course: "Algoritmi numerici per la fisica".
 
-# Indicazioni per il codice
+# Indicazioni per il codice
 
 Conviene guardare le funzioni scritte nel file "function_alg.cpp" anziché quelle nei vari file di esercizi. Nel file con tutte le funzioni sono presenti molti più commenti e la scrittura e più ordinata.
 
